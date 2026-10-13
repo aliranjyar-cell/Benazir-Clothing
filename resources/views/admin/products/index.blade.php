@@ -142,7 +142,7 @@
                                     <div class="flex items-center gap-3">
                                         @if ($product->primaryImage?->image_path)
                                             <img
-                                                src="{{ \Illuminate\Support\Facades\Storage::url($product->primaryImage->image_path) }}"
+                                                src="{{ asset('storage/'.$product->primaryImage->image_path) }}"
                                                 alt=""
                                                 class="h-11 w-11 shrink-0 rounded-xl object-cover ring-1 ring-black/5"
                                                 loading="lazy"
@@ -187,9 +187,13 @@
                                 </td>
 
                                 <td class="hidden px-5 py-4 lg:table-cell">
-                                    <span class="tabular-nums {{ $stock > 0 ? 'text-ink' : 'font-medium text-blush-deep' }}">
-                                        {{ $stock }} unit{{ $stock === 1 ? '' : 's' }}
-                                    </span>
+                                    @if ($stock === 0)
+                                        <span class="font-medium tabular-nums text-blush-deep">Out of stock</span>
+                                    @elseif ($stock <= 5)
+                                        <span class="font-medium tabular-nums text-blush-deep">{{ $stock }} unit{{ $stock === 1 ? '' : 's' }}</span>
+                                    @else
+                                        <span class="tabular-nums text-ink">{{ $stock }} units</span>
+                                    @endif
                                 </td>
 
                                 <td class="px-5 py-4">

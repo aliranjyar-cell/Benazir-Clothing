@@ -1,15 +1,20 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Throwable;
 
 class ProductController extends Controller
 {
@@ -66,24 +71,52 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created product.
+     * Store a newly created product with its variants and images.
      */
     public function store(StoreProductRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $uploads = $request->file('images', []);
+        $storedPaths = [];
 
-        DB::transaction(function () use ($request, $data) {
-            Product::create([
-                'category_id' => $data['category_id'] ?? null,
-                'name' => $data['name'],
-                'slug' => $this->resolveSlug($data['name'], $data['slug'] ?? null),
-                'description' => $data['description'] ?? null,
-                'fabric' => $data['fabric'] ?? null,
-                'care_instructions' => $data['care_instructions'] ?? null,
-                'is_active' => $request->boolean('is_active'),
-                'is_featured' => $request->boolean('is_featured'),
-            ]);
-        });
+        try {
+            $product = DB::transaction(function () use ($request, $data, $uploads, &$storedPaths) {
+                $product = Product::create([
+                    'category_id' => filled($data['category_id'] ?? null) ? (int) $data['category_id'] : null,
+                    'name' => $data['name'],
+                    'slug' => $this->resolveSlug($data['name'], $data['slug'] ?? null),
+                    'description' => $data['description'] ?? null,
+                    'fabric' => $data['fabric'] ?? null,
+                    'care_instructions' => $data['care_instructions'] ?? null,
+                    'is_active' => $request->boolean('is_active'),
+                    'is_featured' => $request->boolean('is_featured'),
+                ]);
+
+                $this->syncVariants($product, $data['variants'] ?? []);
+
+                if ($uploads !== []) {
+                    $this->storeImages(
+                        $product,
+                        $uploads,
+                        $request->input('primary_image_id'),
+                        $storedPaths,
+                    );
+                }
+
+                return $product;
+            });
+        } catch (Throwable $exception) {
+            // Roll back any files written before the failure so no orphans remain.
+            Storage::disk('public')->delete(array_values(array_unique($storedPaths)));
+
+            throw $exception;
+        }
+
+        if ($request->input('intent') === 'stay') {
+            return redirect()
+                ->route('products.edit', $product)
+                ->with('success', 'Product created. You can keep editing it here.');
+        }
 
         return redirect()
             ->route('products.index')
@@ -91,11 +124,16 @@ class ProductController extends Controller
     }
 
     /**
-     * Show a single product.
+     * Show a single product with its gallery and variants.
      */
     public function show(Product $product): View
     {
-        $product->load('category:id,name', 'primaryImage:id,product_id,image_path')
+        $product->load([
+            'category:id,name',
+            'images' => fn ($query) => $query->orderBy('sort_order'),
+            'primaryImage:id,product_id,image_path',
+            'variants' => fn ($query) => $query->orderBy('size')->orderBy('color'),
+        ])
             ->loadCount('variants')
             ->loadSum(['variants as total_stock' => fn ($query) => $query->where('is_active', true)], 'stock_quantity')
             ->loadMin(['variants as price_min' => fn ($query) => $query->where('is_active', true)], 'price')
@@ -113,11 +151,16 @@ class ProductController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
+        $product->load([
+            'images' => fn ($query) => $query->orderBy('sort_order'),
+            'variants' => fn ($query) => $query->orderBy('id'),
+        ]);
+
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
     /**
-     * Update the specified product.
+     * Update the specified product, its variants and its gallery.
      */
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
@@ -126,18 +169,43 @@ class ProductController extends Controller
         // A blank slug keeps the existing one so public URLs stay stable.
         $requestedSlug = ($data['slug'] ?? null) ?: $product->slug;
 
-        DB::transaction(function () use ($request, $data, $product, $requestedSlug) {
-            $product->update([
-                'category_id' => $data['category_id'] ?? null,
-                'name' => $data['name'],
-                'slug' => $this->resolveSlug($data['name'], $requestedSlug, $product),
-                'description' => $data['description'] ?? null,
-                'fabric' => $data['fabric'] ?? null,
-                'care_instructions' => $data['care_instructions'] ?? null,
-                'is_active' => $request->boolean('is_active'),
-                'is_featured' => $request->boolean('is_featured'),
-            ]);
-        });
+        $deletedPaths = [];
+        $storedPaths = [];
+
+        try {
+            DB::transaction(function () use ($request, $data, $product, $requestedSlug, &$deletedPaths, &$storedPaths) {
+                $product->update([
+                    'category_id' => filled($data['category_id'] ?? null) ? (int) $data['category_id'] : null,
+                    'name' => $data['name'],
+                    'slug' => $this->resolveSlug($data['name'], $requestedSlug, $product),
+                    'description' => $data['description'] ?? null,
+                    'fabric' => $data['fabric'] ?? null,
+                    'care_instructions' => $data['care_instructions'] ?? null,
+                    'is_active' => $request->boolean('is_active'),
+                    'is_featured' => $request->boolean('is_featured'),
+                ]);
+
+                if (array_key_exists('variants', $data) || $request->boolean('has_variant_editor')) {
+                    $this->syncVariants($product, $data['variants'] ?? []);
+                }
+
+                $this->applyImageChanges($product, $data, $request->file('images', []), $storedPaths, $deletedPaths);
+            });
+        } catch (Throwable $exception) {
+            Storage::disk('public')->delete(array_values(array_unique($storedPaths)));
+
+            throw $exception;
+        }
+
+        // Files are removed only after the transaction has committed and only
+        // when no other image row still references the same path.
+        $this->deleteImageFiles($deletedPaths);
+
+        if ($request->input('intent') === 'stay') {
+            return redirect()
+                ->route('products.edit', $product)
+                ->with('success', 'Product saved. You can keep editing it here.');
+        }
 
         return redirect()
             ->route('products.index')
@@ -183,5 +251,169 @@ class ProductController extends Controller
         }
 
         return $slug;
+    }
+
+    /**
+     * Create, update and remove variants so the table mirrors the editor rows.
+     *
+     * Removal is explicit: any variant absent from the submitted rows is
+     * deleted, which the administrator controls through the editor UI.
+     */
+    private function syncVariants(Product $product, array $rows): void
+    {
+        $keepIds = [];
+
+        foreach ($rows as $row) {
+            $payload = [
+                'sku' => $row['sku'],
+                'size' => filled($row['size'] ?? null) ? $row['size'] : null,
+                'color' => filled($row['color'] ?? null) ? $row['color'] : null,
+                'price' => $row['price'],
+                'compare_at_price' => filled($row['compare_at_price'] ?? null) ? $row['compare_at_price'] : null,
+                'stock_quantity' => (int) $row['stock_quantity'],
+                'is_active' => array_key_exists('is_active', $row)
+                    ? filter_var($row['is_active'], FILTER_VALIDATE_BOOLEAN)
+                    : true,
+            ];
+
+            if (! empty($row['id'])) {
+                // Ownership is enforced: only this product's variants can be edited.
+                $variant = $product->variants()->whereKey($row['id'])->first();
+
+                if ($variant) {
+                    $variant->update($payload);
+                    $keepIds[] = $variant->id;
+                }
+
+                continue;
+            }
+
+            $keepIds[] = $product->variants()->create($payload)->id;
+        }
+
+        $product->variants()
+            ->when($keepIds, fn ($query) => $query->whereNotIn('id', $keepIds))
+            ->when($keepIds === [], fn ($query) => $query)
+            ->delete();
+    }
+
+    /**
+     * Persist uploaded images to the public disk and create their rows.
+     *
+     * @param  array<int, UploadedFile>  $files
+     * @param  array<int, string>  $storedPaths  Collected paths for rollback.
+     */
+    private function storeImages(Product $product, array $files, ?string $primaryReference, array &$storedPaths): void
+    {
+        $nextOrder = (int) $product->images()->max('sort_order') + 1;
+        $createdRows = [];
+
+        foreach (array_values($files) as $index => $file) {
+            $path = $file->store('products/'.$product->id, 'public');
+
+            if ($path === false) {
+                throw new \RuntimeException('The image could not be stored. Please try again.');
+            }
+
+            $storedPaths[] = $path;
+
+            $createdRows[] = [
+                'product_id' => $product->id,
+                'image_path' => $path,
+                'alt_text' => $product->name,
+                'sort_order' => $nextOrder + $index,
+                'is_primary' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        if ($createdRows !== []) {
+            ProductImage::query()->insert($createdRows);
+        }
+
+        $this->resolvePrimaryImage($product, $primaryReference);
+    }
+
+    /**
+     * Apply gallery maintenance for an update: deletion, ordering, new
+     * uploads and primary selection — all inside the caller's transaction.
+     *
+     * @param  array<int, UploadedFile>  $files
+     * @param  array<int, string>  $storedPaths
+     * @param  array<int, string>  $deletedPaths  Paths queued for removal.
+     */
+    private function applyImageChanges(Product $product, array $data, array $files, array &$storedPaths, array &$deletedPaths): void
+    {
+        $deleteIds = array_map('intval', $data['delete_images'] ?? []);
+
+        if ($deleteIds !== []) {
+            foreach ($product->images()->whereKey($deleteIds)->get() as $image) {
+                $deletedPaths[] = $image->image_path;
+                $image->delete();
+            }
+        }
+
+        foreach (array_values($data['image_order'] ?? []) as $position => $imageId) {
+            $product->images()->whereKey((int) $imageId)->update(['sort_order' => $position]);
+        }
+
+        if ($files !== []) {
+            $this->storeImages($product, $files, $data['primary_image_id'] ?? null, $storedPaths);
+        } else {
+            $this->resolvePrimaryImage($product, $data['primary_image_id'] ?? null);
+        }
+    }
+
+    /**
+     * Point is_primary at the requested image ("existing id" or "new-N"),
+     * falling back to the first image in gallery order.
+     */
+    private function resolvePrimaryImage(Product $product, ?string $reference): void
+    {
+        $images = $product->images()->orderBy('sort_order')->get();
+
+        if ($images->isEmpty()) {
+            return;
+        }
+
+        $primaryId = null;
+
+        if (str_starts_with((string) $reference, 'new-')) {
+            $newIndex = (int) substr($reference, 4);
+            // Newly inserted rows sort last, so count back from the end.
+            $primaryId = $images->reverse()->values()->get($newIndex)?->id;
+        } elseif ($reference !== null && $reference !== '') {
+            $primaryId = $images->firstWhere('id', (int) $reference)?->id;
+        }
+
+        $primaryId ??= $images->first()->id;
+
+        foreach ($images as $image) {
+            if ($image->is_primary !== ($image->id === $primaryId)) {
+                $image->update(['is_primary' => $image->id === $primaryId]);
+            }
+        }
+    }
+
+    /**
+     * Delete files from disk once their rows are gone, skipping any path
+     * still referenced by another image record.
+     *
+     * @param  array<int, string>  $paths
+     */
+    private function deleteImageFiles(array $paths): void
+    {
+        foreach (array_unique($paths) as $path) {
+            if (blank($path)) {
+                continue;
+            }
+
+            if (ProductImage::query()->where('image_path', $path)->exists()) {
+                continue;
+            }
+
+            Storage::disk('public')->delete($path);
+        }
     }
 }

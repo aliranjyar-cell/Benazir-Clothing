@@ -4,7 +4,10 @@ namespace Tests\Feature;
 use App\Models\Admin;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -258,5 +261,199 @@ class ProductManagementTest extends TestCase
             ->assertSee('Phulkari Anarkali Suit')
             ->assertSee('Variants')
             ->assertSee('Status');
+    }
+
+    public function test_admin_can_create_product_with_variants_and_images(): void
+    {
+        Storage::fake('public');
+
+        $response = $this->actingAs($this->admin)->post(route('products.store'), [
+            'name' => 'Chanderi Saree',
+            'is_active' => '1',
+            'has_variant_editor' => '1',
+            'variants' => [
+                ['sku' => 'CHN-001', 'size' => 'One Size', 'color' => 'Ivory', 'price' => '4999', 'stock_quantity' => '4', 'is_active' => '1'],
+                ['sku' => 'CHN-002', 'size' => 'One Size', 'color' => 'Mint', 'price' => '4999', 'stock_quantity' => '0', 'is_active' => '0'],
+            ],
+            'images' => [
+                UploadedFile::fake()->create('front.jpg', 200, 'image/jpeg'),
+                UploadedFile::fake()->create('back.jpg', 200, 'image/jpeg'),
+            ],
+        ]);
+
+        $response->assertRedirect(route('products.index'));
+
+        $product = Product::firstWhere('name', 'Chanderi Saree');
+        $this->assertNotNull($product);
+        $this->assertDatabaseHas('product_variants', ['product_id' => $product->id, 'sku' => 'CHN-001', 'stock_quantity' => 4]);
+        $this->assertDatabaseHas('product_variants', ['product_id' => $product->id, 'sku' => 'CHN-002', 'is_active' => false]);
+        $this->assertSame(2, $product->images()->count());
+        $this->assertSame(1, $product->images()->where('is_primary', true)->count());
+
+        foreach ($product->images as $image) {
+            Storage::disk('public')->assertExists($image->image_path);
+        }
+    }
+
+    public function test_negative_price_and_missing_sku_are_rejected(): void
+    {
+        $this->actingAs($this->admin)->post(route('products.store'), [
+            'name' => 'Broken Row',
+            'has_variant_editor' => '1',
+            'variants' => [
+                ['sku' => '', 'price' => '-5', 'stock_quantity' => '-1'],
+            ],
+        ])->assertSessionHasErrors(['variants.0.sku', 'variants.0.price', 'variants.0.stock_quantity']);
+
+        $this->assertDatabaseCount('product_variants', 0);
+    }
+
+    public function test_duplicate_size_and_colour_combination_is_rejected(): void
+    {
+        $this->actingAs($this->admin)->post(route('products.store'), [
+            'name' => 'Duplicate Combo',
+            'has_variant_editor' => '1',
+            'variants' => [
+                ['sku' => 'DUP-1', 'size' => 'M', 'color' => 'Rose', 'price' => '100', 'stock_quantity' => '1'],
+                ['sku' => 'DUP-2', 'size' => 'M', 'color' => 'Rose', 'price' => '100', 'stock_quantity' => '1'],
+            ],
+        ])->assertSessionHasErrors('variants.1.color');
+
+        $this->assertDatabaseCount('product_variants', 0);
+    }
+
+    public function test_variant_sku_must_be_globally_unique(): void
+    {
+        $other = $this->makeProduct(['name' => 'Other Product']);
+        $this->makeVariant($other, ['sku' => 'TAKEN-SKU']);
+
+        $this->actingAs($this->admin)->post(route('products.store'), [
+            'name' => 'New Product',
+            'has_variant_editor' => '1',
+            'variants' => [
+                ['sku' => 'TAKEN-SKU', 'price' => '100', 'stock_quantity' => '1'],
+            ],
+        ])->assertSessionHasErrors('variants.0.sku');
+    }
+
+    public function test_update_syncs_variants_and_emptied_editor_removes_all(): void
+    {
+        $product = $this->makeProduct();
+        $kept = $this->makeVariant($product, ['sku' => 'KEEP-1', 'price' => 1000, 'stock_quantity' => 3]);
+        $removed = $this->makeVariant($product, ['sku' => 'GONE-1', 'price' => 2000, 'stock_quantity' => 1]);
+
+        $this->actingAs($this->admin)->patch(route('products.update', $product), [
+            'name' => $product->name,
+            'has_variant_editor' => '1',
+            'variants' => [
+                ['id' => $kept->id, 'sku' => 'KEEP-1', 'size' => 'L', 'price' => '1500', 'stock_quantity' => '7', 'is_active' => '1'],
+            ],
+        ])->assertRedirect(route('products.index'));
+
+        $this->assertDatabaseHas('product_variants', ['id' => $kept->id, 'stock_quantity' => 7, 'size' => 'L']);
+        $this->assertDatabaseMissing('product_variants', ['id' => $removed->id]);
+
+        // An emptied editor (sentinel flag only) removes every variant.
+        $this->actingAs($this->admin)->patch(route('products.update', $product), [
+            'name' => $product->name,
+            'has_variant_editor' => '1',
+        ]);
+
+        $this->assertSame(0, $product->variants()->count());
+    }
+
+    public function test_update_cannot_touch_another_products_variant(): void
+    {
+        $mine = $this->makeProduct(['name' => 'Mine']);
+        $theirs = $this->makeProduct(['name' => 'Theirs']);
+        $foreign = $this->makeVariant($theirs, ['sku' => 'FOREIGN-1']);
+
+        $this->actingAs($this->admin)->patch(route('products.update', $mine), [
+            'name' => $mine->name,
+            'has_variant_editor' => '1',
+            'variants' => [
+                ['id' => $foreign->id, 'sku' => 'FOREIGN-1', 'price' => '100', 'stock_quantity' => '1'],
+            ],
+        ])->assertSessionHasErrors('variants.0.id');
+
+        $this->assertDatabaseHas('product_variants', ['id' => $foreign->id, 'product_id' => $theirs->id]);
+    }
+
+    public function test_image_upload_validation_rejects_non_images(): void
+    {
+        Storage::fake('public');
+
+        $this->actingAs($this->admin)->post(route('products.store'), [
+            'name' => 'Bad Upload',
+            'images' => [UploadedFile::fake()->create('notes.txt', 10, 'text/plain')],
+        ])->assertSessionHasErrors('images.0');
+
+        $this->assertDatabaseCount('product_images', 0);
+    }
+
+    public function test_update_can_delete_images_and_reassign_primary(): void
+    {
+        Storage::fake('public');
+
+        $product = $this->makeProduct();
+        $first = $this->makeImage($product, 'one.jpg', isPrimary: true);
+        $second = $this->makeImage($product, 'two.jpg');
+
+        $this->actingAs($this->admin)->patch(route('products.update', $product), [
+            'name' => $product->name,
+            'primary_image_id' => (string) $second->id,
+            'delete_images' => [$first->id],
+            'image_order' => [$second->id],
+        ])->assertRedirect(route('products.index'));
+
+        $this->assertDatabaseMissing('product_images', ['id' => $first->id]);
+        Storage::disk('public')->assertMissing($first->image_path);
+        Storage::disk('public')->assertExists($second->image_path);
+
+        $this->assertTrue($second->fresh()->is_primary);
+    }
+
+    public function test_product_show_page_displays_gallery_and_variants(): void
+    {
+        Storage::fake('public');
+
+        $product = $this->makeProduct();
+        $this->makeVariant($product, ['sku' => 'SHOW-1', 'size' => 'M', 'color' => 'Rose']);
+        $image = $this->makeImage($product, 'show.jpg', isPrimary: true);
+
+        $this->actingAs($this->admin)
+            ->get(route('products.show', $product))
+            ->assertOk()
+            ->assertSee('SHOW-1')
+            ->assertSee(asset('storage/'.$image->image_path), false)
+            ->assertSee('Primary');
+    }
+
+    private function makeVariant(Product $product, array $overrides = []): ProductVariant
+    {
+        return $product->variants()->create(array_merge([
+            'sku' => 'SKU-'.uniqid(),
+            'size' => 'M',
+            'color' => 'Rose',
+            'price' => 1999,
+            'stock_quantity' => 10,
+        ], $overrides));
+    }
+
+    private function makeImage(Product $product, string $filename, bool $isPrimary = false): \App\Models\ProductImage
+    {
+        $path = 'products/'.$product->id.'/'.$filename;
+        Storage::disk('public')->put($path, 'fake-image-binary');
+
+        return $product->images()->create([
+            'image_path' => $path,
+            'alt_text' => $product->name,
+            'sort_order' => $product->images()->count(),
+            'is_primary' => $isPrimary,
+        ]);
+    }
+}
+            'is_active' => true,
+        ], $overrides));
     }
 }
