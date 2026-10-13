@@ -89,7 +89,7 @@ class StoreProductRequest extends FormRequest
                 $seen = [];
 
                 foreach ($this->input('variants', []) as $index => $row) {
-                    $key = mb_strtolower(trim(($row['size'] ?? '').'|'.($row['color'] ?? '')));
+                    $key = strtolower(trim(($row['size'] ?? '').'|'.($row['color'] ?? '')));
 
                     if (array_key_exists($key, $seen)) {
                         $validator->errors()->add(
