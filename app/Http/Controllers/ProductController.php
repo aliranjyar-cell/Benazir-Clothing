@@ -79,6 +79,10 @@ class ProductController extends Controller
         $uploads = $request->file('images', []);
         $storedPaths = [];
 
+        // #region agent log
+        file_put_contents(base_path('debug-d42924.log'), json_encode(['sessionId' => 'd42924', 'hypothesisId' => 'A', 'location' => 'ProductController.php:store', 'message' => 'store received images', 'data' => ['hasFileImages' => $request->hasFile('images'), 'uploadsIsArray' => is_array($uploads), 'uploadCount' => is_array($uploads) ? count($uploads) : 0, 'uploadNames' => is_array($uploads) ? array_map(fn ($f) => $f instanceof UploadedFile ? $f->getClientOriginalName() : null, $uploads) : [], 'primaryRef' => $request->input('primary_image_id')], 'timestamp' => (int) (microtime(true) * 1000), 'runId' => 'post-fix'])."\n", FILE_APPEND);
+        // #endregion
+
         try {
             $product = DB::transaction(function () use ($request, $data, $uploads, &$storedPaths) {
                 $product = Product::create([
@@ -102,6 +106,10 @@ class ProductController extends Controller
                         $storedPaths,
                     );
                 }
+
+                // #region agent log
+                file_put_contents(base_path('debug-d42924.log'), json_encode(['sessionId' => 'd42924', 'hypothesisId' => 'B', 'location' => 'ProductController.php:store:afterTx', 'message' => 'product created image state', 'data' => ['productId' => $product->id, 'skippedStoreImages' => $uploads === [], 'storedPathCount' => count($storedPaths), 'dbImageCount' => $product->images()->count()], 'timestamp' => (int) (microtime(true) * 1000), 'runId' => 'post-fix'])."\n", FILE_APPEND);
+                // #endregion
 
                 return $product;
             });
@@ -138,6 +146,10 @@ class ProductController extends Controller
             ->loadSum(['variants as total_stock' => fn ($query) => $query->where('is_active', true)], 'stock_quantity')
             ->loadMin(['variants as price_min' => fn ($query) => $query->where('is_active', true)], 'price')
             ->loadMax(['variants as price_max' => fn ($query) => $query->where('is_active', true)], 'price');
+
+        // #region agent log
+        file_put_contents(base_path('debug-d42924.log'), json_encode(['sessionId' => 'd42924', 'hypothesisId' => 'C', 'location' => 'ProductController.php:show', 'message' => 'show page gallery state', 'data' => ['productId' => $product->id, 'imageCount' => $product->images->count(), 'paths' => $product->images->pluck('image_path')->values()->all(), 'diskExists' => $product->images->map(fn ($img) => Storage::disk('public')->exists($img->image_path))->values()->all()], 'timestamp' => (int) (microtime(true) * 1000), 'runId' => 'post-fix'])."\n", FILE_APPEND);
+        // #endregion
 
         return view('admin.products.show', compact('product'));
     }

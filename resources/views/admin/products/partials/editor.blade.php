@@ -248,6 +248,18 @@
                     const transfer = new DataTransfer();
                     this.previews.forEach((preview) => transfer.items.add(preview.file));
                     this.$refs.imageInput.files = transfer.files;
+                    // #region agent log
+                    fetch('http://127.0.0.1:7724/ingest/be648393-b15d-4fdd-85bb-1b3aabd31d5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d42924'},body:JSON.stringify({sessionId:'d42924',hypothesisId:'D',location:'editor.blade.php:syncFiles',message:'after syncFiles',data:{previewCount:this.previews.length,inputFileCount:this.$refs.imageInput?.files?.length ?? -1},timestamp:Date.now(),runId:'post-fix'})}).catch(()=>{});
+                    // #endregion
+                },
+
+                init() {
+                    this.$el.addEventListener('submit', () => {
+                        // #region agent log
+                        const payload = JSON.stringify({sessionId:'d42924',hypothesisId:'A',location:'editor.blade.php:submit',message:'form submit file state',data:{previewCount:this.previews.length,inputFileCount:this.$refs.imageInput?.files?.length ?? -1,inputNames:Array.from(this.$refs.imageInput?.files ?? []).map(f => f.name)},timestamp:Date.now(),runId:'post-fix'});
+                        try { navigator.sendBeacon('http://127.0.0.1:7724/ingest/be648393-b15d-4fdd-85bb-1b3aabd31d5c', new Blob([payload], {type:'application/json'})); } catch (e) {}
+                        // #endregion
+                    });
                 },
 
                 moveImage(index, direction) {

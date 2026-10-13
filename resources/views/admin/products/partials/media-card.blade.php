@@ -99,7 +99,7 @@
                     accept="image/jpeg,image/png,image/webp,image/avif"
                     multiple
                     class="sr-only"
-                    @change="addFiles($event.target.files); $event.target.value = ''"
+                    @change="addFiles($event.target.files); $event.target.value = ''; syncFiles(); /* #region agent log */ fetch('http://127.0.0.1:7724/ingest/be648393-b15d-4fdd-85bb-1b3aabd31d5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d42924'},body:JSON.stringify({sessionId:'d42924',hypothesisId:'D',location:'media-card.blade.php:change',message:'after clear+resync',data:{previewCount:previews.length,inputFileCount:$refs.imageInput?.files?.length ?? -1},timestamp:Date.now(),runId:'post-fix'})}).catch(()=>{}); /* #endregion */"
                 />
             </label>
         </div>
