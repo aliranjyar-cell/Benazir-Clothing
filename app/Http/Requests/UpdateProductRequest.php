@@ -143,11 +143,10 @@ class UpdateProductRequest extends FormRequest
                 $seen = [];
 
                 foreach ($this->input('variants', []) as $index => $row) {
-<<<<<<< HEAD
-                    $key = mb_strtolower(trim(($row['size'] ?? '').'|'.($row['color'] ?? '')));
-=======
+
+                   
                     $key = strtolower(trim(($row['size'] ?? '').'|'.($row['color'] ?? '')));
->>>>>>> 377bc8b (fixed mb_strtolower)
+
 
                     if (array_key_exists($key, $seen)) {
                         $validator->errors()->add(
