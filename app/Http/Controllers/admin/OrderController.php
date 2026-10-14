@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
@@ -10,6 +12,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -36,11 +39,11 @@ class OrderController extends Controller
             })
             ->when(
                 $filters['status'] ?? null,
-                fn ($query, $status) => $query->where('status', $status)
+                fn($query, $status) => $query->where('status', $status)
             )
             ->when(
                 $filters['payment_status'] ?? null,
-                fn ($query, $status) => $query->where(
+                fn($query, $status) => $query->where(
                     'payment_status',
                     $status
                 )
@@ -72,16 +75,26 @@ class OrderController extends Controller
         ));
     }
 
+
     public function show(Order $order): View
     {
         $order->load([
+            'user',
             'items.product',
             'items.variant',
             'statusHistories.admin',
         ]);
 
-        return view('admin.orders.show', compact('order'));
+        $customers = $order->user_id
+            ? collect()
+            : User::query()
+            ->orderBy('name')
+            ->orderBy('email')
+            ->get(['id', 'name', 'email']);
+
+        return view('admin.orders.show', compact('order', 'customers'));
     }
+
 
     public function updateStatus(
         Request $request,
@@ -158,5 +171,42 @@ class OrderController extends Controller
             ->route('admin.orders.show', $order)
             ->with('success', 'Payment status updated successfully.');
     }
-}
 
+    public function linkCustomer(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'customer_id' => ['required', 'integer', 'exists:users,id'],
+        ]);
+
+        $result = DB::transaction(function () use ($order, $validated) {
+            $lockedOrder = Order::whereKey($order->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // Never silently replace an existing customer.
+            if ($lockedOrder->user_id !== null) {
+                return false;
+            }
+
+            $customer = User::findOrFail($validated['customer_id']);
+
+            // Only attach the customer. Do not touch items, totals, or stock.
+            $lockedOrder->user()->associate($customer);
+            $lockedOrder->save();
+
+            return true;
+        });
+
+        if (! $result) {
+            return back()->with(
+                'error',
+                'This order is already linked to a customer.'
+            );
+        }
+
+        return back()->with(
+            'success',
+            'Guest order linked to the customer successfully.'
+        );
+    }
+}

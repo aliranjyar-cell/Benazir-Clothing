@@ -1,6 +1,8 @@
 <?php
+
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -84,6 +86,33 @@ Route::middleware('auth:admin')->group(function () {
 
     Route::patch('/orders/{order}/payment', [OrderController::class, 'updatePayment'])
         ->name('admin.orders.payment.update');
+
+
+
+
+    Route::get('/customers/create', [CustomerController::class, 'create'])
+        ->name('admin.customers.create');
+
+    Route::post('/customers', [CustomerController::class, 'store'])
+        ->name('admin.customers.store');
+
+    Route::get('/customers', [CustomerController::class, 'index'])
+        ->name('admin.customers.index');
+
+    Route::get('/customers/{customer}', [CustomerController::class, 'show'])
+        ->name('admin.customers.show');
+
+    Route::get('/customers/{customer}/edit', [CustomerController::class, 'edit'])
+        ->name('admin.customers.edit');
+
+    Route::put('/customers/{customer}', [CustomerController::class, 'update'])
+        ->name('admin.customers.update');
+
+    Route::patch(
+        '/orders/{order}/link-customer',
+        [OrderController::class, 'linkCustomer']
+    )->name('admin.orders.link-customer');
+    
 });
 // Route::middleware('auth')->group(function () {
 //     Route::resource('admins', AdminController::class);

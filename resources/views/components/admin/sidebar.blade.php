@@ -28,7 +28,7 @@
             'items' => [
 
                 ['label' => 'Orders', 'icon' => 'clipboard','route' => 'admin.orders.index', 'matches' => 'admin.orders.*', ],
-                ['label' => 'Customers', 'icon' => 'users'],
+                ['label' => 'Customers', 'icon' => 'users', 'route' => 'admin.customers.index', 'matches' => 'admin.customers.*' ,],
             ],
         ],
         [

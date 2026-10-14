@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -85,6 +86,8 @@ class Order extends Model
             'confirmed_at' => 'datetime',
             'shipped_at' => 'datetime',
             'delivered_at' => 'datetime',
+            'stock_deducted_at' => 'datetime',
+            'stock_restored_at' => 'datetime',
         ];
     }
 
