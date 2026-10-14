@@ -1,6 +1,5 @@
 <?php
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -59,5 +58,21 @@ class Category extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Get the full ancestor chain for a category, ordered root first.
+     */
+    public function ancestors(): array
+    {
+        $chain = [];
+        $parent = $this->parent;
+
+        while ($parent !== null) {
+            $chain[] = $parent;
+            $parent = $parent->parent;
+        }
+
+        return array_reverse($chain);
     }
 }

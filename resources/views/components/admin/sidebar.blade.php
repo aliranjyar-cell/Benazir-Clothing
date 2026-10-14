@@ -19,7 +19,7 @@
             'label' => 'Catalogue',
             'items' => [
                 ['label' => 'Products', 'icon' => 'cube', 'route' => 'products.index', 'matches' => 'products.*'],
-                ['label' => 'Categories', 'icon' => 'tag'],
+                ['label' => 'Categories', 'icon' => 'tag', 'route' => 'categories.index', 'matches' => 'categories.*'],
                 ['label' => 'Inventory', 'icon' => 'archive'],
             ],
         ],
