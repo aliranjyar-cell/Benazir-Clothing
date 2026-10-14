@@ -1,8 +1,10 @@
 <?php
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\InventoryController;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -57,9 +59,31 @@ Route::middleware('auth:admin')->group(function () {
         ->name('products.toggle-status');
 
 
+
+    Route::get('/inventory', [InventoryController::class, 'index'])->name('admin.inventory.index');
+    Route::get('/inventory/{variant}/adjust', [InventoryController::class, 'adjust'])->name('admin.inventory.adjust');
+    Route::post('/inventory/{variant}/adjust', [InventoryController::class, 'storeAdjustment'])->name('admin.inventory.adjust.store');
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+
+
+
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->name('admin.orders.index');
+
+    Route::get('/orders/{order}', [OrderController::class, 'show'])
+        ->name('admin.orders.show');
+
+    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])
+        ->name('admin.orders.status.update');
+
+    Route::patch('/orders/{order}/payment', [OrderController::class, 'updatePayment'])
+        ->name('admin.orders.payment.update');
 });
 // Route::middleware('auth')->group(function () {
 //     Route::resource('admins', AdminController::class);

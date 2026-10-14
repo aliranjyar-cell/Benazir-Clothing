@@ -20,13 +20,14 @@
             'items' => [
                 ['label' => 'Products', 'icon' => 'cube', 'route' => 'products.index', 'matches' => 'products.*'],
                 ['label' => 'Categories', 'icon' => 'tag', 'route' => 'categories.index', 'matches' => 'categories.*'],
-                ['label' => 'Inventory', 'icon' => 'archive'],
+                ['label' => 'Inventory', 'icon' => 'archive', 'route' => 'admin.inventory.index', 'matches' => 'admin.inventory.*'],
             ],
         ],
         [
             'label' => 'Sales',
             'items' => [
-                ['label' => 'Orders', 'icon' => 'clipboard'],
+
+                ['label' => 'Orders', 'icon' => 'clipboard','route' => 'admin.orders.index', 'matches' => 'admin.orders.*', ],
                 ['label' => 'Customers', 'icon' => 'users'],
             ],
         ],

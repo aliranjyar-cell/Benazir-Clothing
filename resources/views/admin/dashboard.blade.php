@@ -72,8 +72,8 @@
                 @foreach ([
                     ['label' => 'Add a product', 'description' => 'Create a new salwar suit, saree or kurti listing', 'icon' => 'plus', 'route' => 'products.create'],
                     ['label' => 'Browse products', 'description' => 'Search, edit and manage the catalogue', 'icon' => 'cube', 'route' => 'products.index'],
-                    ['label' => 'Manage inventory', 'description' => 'Update sizes, colours and stock levels', 'icon' => 'archive'],
-                    ['label' => 'Review orders', 'description' => 'Process and fulfil customer orders', 'icon' => 'clipboard'],
+                    ['label' => 'Manage inventory', 'description' => 'Update sizes, colours and stock levels', 'icon' => 'archive' , 'route' => 'admin.inventory.index'],
+                    ['label' => 'Review orders', 'description' => 'Process and fulfil customer orders', 'icon' => 'clipboard', 'route' => 'admin.orders.index'],
                 ] as $action)
                     @if (! empty($action['route']) && Route::has($action['route']))
                         <a
