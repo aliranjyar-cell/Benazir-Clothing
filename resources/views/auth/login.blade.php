@@ -4,103 +4,89 @@
         <main class="min-h-screen flex flex-col lg:flex-row relative">
 
             {{-- LEFT COLUMN: BRAND EXPERIENCE --}}
+
+
+            {{-- LEFT COLUMN: MINIMAL ADMIN BRANDING --}}
+
+            {{-- LEFT COLUMN: BENAZIR CLOTHING BRAND PANEL --}}
             <section
-                class="relative lg:w-[54%] w-full min-h-[300px] lg:min-h-screen flex flex-col justify-between overflow-hidden bg-[#3F0F1D] text-white p-6 sm:p-10 lg:p-14">
+                class="relative hidden lg:flex lg:w-[54%] lg:min-h-screen flex-col justify-between overflow-hidden bg-[#28152F] px-10 py-10 xl:px-14 xl:py-12 text-white"
+                style="background-image: linear-gradient(rgba(40, 21, 47, 0.30), rgba(40, 21, 47, 0.30)), url('{{ asset('images/Burgundy Silk with Botanical Embroidery.png') }}'); background-size: cover; background-position: center;">
+                <div aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-[0.13]"
+                    style="background:
+            radial-gradient(ellipse at 15% 15%, rgba(198,161,91,.20), transparent 45%),
+            radial-gradient(ellipse at 85% 85%, rgba(198,161,91,.12), transparent 40%),
+            repeating-linear-gradient(125deg, transparent 0px, transparent 3px, rgba(255,255,255,.025) 4px, transparent 5px);">
+                </div>
 
-                {{-- Background image and overlays --}}
-                <div class="absolute inset-0 z-0">
-                    <img src="{{ asset('images/loginimage.jpg') }}"
-                        alt="Punjabi clothing featuring traditional embroidery"
-                        class="w-full h-full object-cover object-top opacity-85 transition-transform duration-1000">
+                {{-- Subtle gold botanical accent --}}
+                {{-- <svg aria-hidden="true"
+                    class="pointer-events-none absolute -right-12 top-[20%] h-[440px] w-[280px] opacity-[0.20]"
+                    viewBox="0 0 280 440" fill="none">
+                    <path d="M250 5C205 95 240 170 180 245S145 365 80 435" stroke="#C6A15B" stroke-width="1.2" />
+                    <path d="M218 82C165 85 150 55 160 24C196 31 222 51 218 82Z" stroke="#C6A15B" stroke-width="1.2" />
+                    <path d="M207 130C247 100 260 75 252 52C222 69 207 97 207 130Z" stroke="#C6A15B"
+                        stroke-width="1.2" />
+                    <path d="M190 195C140 187 123 157 136 130C173 144 193 165 190 195Z" stroke="#C6A15B"
+                        stroke-width="1.2" />
+                    <path d="M174 247C222 220 240 194 230 170C198 187 177 215 174 247Z" stroke="#C6A15B"
+                        stroke-width="1.2" />
+                    <path d="M145 315C98 306 83 277 98 251C132 265 151 287 145 315Z" stroke="#C6A15B"
+                        stroke-width="1.2" />
+                    <path d="M119 365C164 340 181 314 170 291C140 308 122 335 119 365Z" stroke="#C6A15B"
+                        stroke-width="1.2" />
+                    <path d="M80 435C83 360 135 270 190 195" stroke="#C6A15B" stroke-width="1.2" />
+                </svg> --}}
 
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-[#280812] via-[#4A1424]/60 to-[#280812]/75 mix-blend-multiply">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#280812]/90 via-[#4A1424]/30 to-transparent">
+                {{-- Brand identity --}}
+                <div class="relative z-10 flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center border border-[#C6A15B]/70">
+                        <span class="font-serif text-3xl text-[#D6B875]">B</span>
                     </div>
 
-                    <div class="absolute inset-4 lg:inset-8 border border-[#C6A15B]/25 pointer-events-none rounded-sm">
-                    </div>
-                    <div
-                        class="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-[#C6A15B] pointer-events-none">
-                    </div>
-                    <div
-                        class="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-[#C6A15B] pointer-events-none">
-                    </div>
-                    <div
-                        class="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-[#C6A15B] pointer-events-none">
-                    </div>
-                    <div
-                        class="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-[#C6A15B] pointer-events-none">
+                    <div>
+                        <h1 class="text-sm font-semibold tracking-[0.22em] text-[#F8F3E9]">
+                            BENAZIR CLOTHING
+                        </h1>
+                        <p class="mt-1 text-[10px] tracking-[0.25em] text-[#D6B875]">
+                            ADMINISTRATION
+                        </p>
                     </div>
                 </div>
 
-                {{-- Brand header --}}
-                <header class="relative z-10 flex items-center justify-between">
-                    <div class="flex items-center space-x-3.5">
-                        <div
-                            class="w-10 h-10 rounded-full p-0.5 bg-white/10 backdrop-blur-md border border-[#C6A15B]/40 flex items-center justify-center shadow-lg">
-                            <span class="font-serif text-xl text-[#DFBF7F]">C</span>
-                        </div>
+                {{-- Main message --}}
+                <div class="relative z-10 max-w-xl py-12">
+                    <div class="mb-7 h-[2px] w-12 bg-[#C6A15B]"></div>
 
-                        <div>
-                            <span
-                                class="block text-xl lg:text-2xl font-serif tracking-[0.2em] uppercase font-semibold text-[#F8F3E9]">
-                                Benazir Clothing
-                            </span>
-                            <span class="block text-[10px] tracking-[0.3em] uppercase text-[#DFBF7F] font-medium">
-                                Haute Couture &amp; Heritage Atelier
-                            </span>
-                        </div>
-                    </div>
+                    <h2 class="font-serif text-5xl leading-[1.15] text-[#F8F3E9] xl:text-6xl">
+                        Everything your store
+                        <span class="block">needs.</span>
+                    </h2>
 
-                    <div
-                        class="hidden sm:inline-flex items-center px-3 py-1 rounded-r-full animate-pulse bg-white/10 backdrop-blur-md border border-[#C6A15B]/30 text-[11px] font-medium tracking-wider text-[#F8F3E9] uppercase">
-                        <span class="w-1.5 h-1.5 rounded-r-full bg-[#C6A15B] mr-2"></span>
-                        Admin Portal
-                    </div>
-                </header>
-
-                {{-- Editorial text --}}
-                <div class="relative z-10 mt-12 lg:mt-auto pt-8">
-                    <div
-                        class="inline-flex items-center space-x-2 text-[#DFBF7F] text-xs tracking-[0.25em] uppercase font-medium mb-3">
-                        <span class="w-8 h-px bg-[#DFBF7F]"></span>
-                        <span>Artisanal Heritage Management</span>
-                    </div>
-
-                    <h1
-                        class="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-[#F8F3E9] leading-[1.15] max-w-lg">
-                        Tradition, Woven Into
-                        <br class="hidden sm:inline">
-                        <span class="italic font-normal text-[#DFBF7F]">Every Detail.</span>
-                    </h1>
-
-                    <p
-                        class="mt-4 text-sm sm:text-base text-[#F8F3E9]/80 font-light tracking-wide max-w-md leading-relaxed">
-                        Your brand. Your collections. Your business. Preserving Punjab’s master weaving traditions
-                        across fashion retail.
+                    <p class="mt-6 max-w-md text-sm leading-7 text-white/70">
+                        Track orders, manage products, customers and inventory —
+                        all in one place.
                     </p>
+                </div>
 
-                    <div
-                        class="mt-8 pt-6 border-t border-white/15 flex flex-wrap gap-6 items-center text-xs text-[#F8F3E9]/70">
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-4 h-4 text-[#C6A15B]" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                {{-- Secure access footer --}}
+                <div class="relative z-10">
+                    <div class="mb-5 h-px w-full bg-white/15"></div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-2.5 text-xs text-white/80">
+                            <svg class="h-5 w-5 text-[#D6B875]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 3 4.5 6v5.5c0 4.4 3.2 7.5 7.5 9.5 4.3-2 7.5-5.1 7.5-9.5V6L12 3Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9 12 2 2 4-4" />
                             </svg>
-                            <span>Secure Admin Access</span>
+                            Secure Admin Access
                         </div>
 
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-4 h-4 text-[#C6A15B]" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            <span>Protected Login</span>
-                        </div>
+                        <span class="text-xs text-white/50">
+                            &copy; {{ date('Y') }} Benazir Clothing
+                        </span>
                     </div>
                 </div>
             </section>
@@ -119,13 +105,13 @@
                     <div class="lg:hidden flex items-center space-x-2">
                         <span class="font-serif text-xl text-[#651E32] font-bold">C</span>
                         <span class="font-serif tracking-widest text-[#651E32] font-bold text-sm uppercase">
-                            ClothesShopping
+                            BENAZIR CLOTHING
                         </span>
                     </div>
 
                     <div
-                        class="ml-auto inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#EFE8DC]/70 border border-[#E8E0D7] text-[11px] font-medium text-[#5B5556]">
-                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                        class="ml-auto inline-flex items-center space-x-1.5 px-3 py-1  rounded-full  bg-[#EFE8DC]/70 border border-[#E8E0D7] text-[11px] font-medium text-[#5B5556]">
+                        <span class="w-2 h-2  animate-pulse bg-emerald-600"></span>
                         <span>Admin Portal</span>
                     </div>
                 </div>
@@ -139,7 +125,7 @@
                         <div class="flex flex-col items-center text-center mb-7">
                             <div
                                 class="w-14 h-14 rounded-full bg-[#F8F3E9] border border-[#C6A15B]/40 flex items-center justify-center shadow-inner mb-3.5">
-                                <span class="font-serif text-3xl text-[#651E32]">C</span>
+                                <span class="font-serif text-3xl text-[#651E32]">B</span>
                             </div>
 
                             <h2 class="font-serif text-3xl font-medium tracking-tight text-[#292526]">
@@ -208,7 +194,8 @@
                                 <div class="relative">
                                     <div
                                         class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#867F81]">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
                                                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>
@@ -308,7 +295,7 @@
                 {{-- Footer --}}
                 <footer class="w-full text-center relative z-10 pt-6 lg:pt-0">
                     <p class="text-xs text-[#867F81] font-light">
-                        © {{ date('Y') }} ClothesShopping. All rights reserved.
+                        © {{ date('Y') }} BENAZIRCLOTHING. All rights reserved.
                     </p>
                 </footer>
             </section>
