@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
@@ -21,14 +20,17 @@ Route::get('/dashboard', function () {
             'products' => Product::query()->count(),
             'categories' => Category::query()->count(),
             'variants' => ProductVariant::query()->count(),
-            'lowStock' => ProductVariant::query()->where('stock_quantity', '<=', $lowStockThreshold)->count(),
+            'lowStock' => ProductVariant::query()
+                ->where('stock_quantity', '<=', $lowStockThreshold)
+                ->count(),
             'lowStockThreshold' => $lowStockThreshold,
         ],
     ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware('auth:admin')->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::resource('admins', AdminController::class);
+
+Route::middleware('auth:admin')->group(function () {
+    // Keep all your existing admin, category, product and profile routes here.
 
     Route::resource('categories', CategoryController::class)
         ->only(['index', 'create', 'store', 'show', 'edit', 'update'])
@@ -59,5 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+// Route::middleware('auth')->group(function () {
+//     Route::resource('admins', AdminController::class);
+// });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -1,5 +1,6 @@
 <?php
 namespace Tests\Feature;
+
 use App\Models\Admin;
 use App\Models\Category;
 use App\Models\Product;
@@ -30,12 +31,17 @@ class CategoryManagementTest extends TestCase
 
     private function makeCategory(array $overrides = []): Category
     {
-        return Category::create(array_merge([
+        $attributes = array_merge([
             'name' => 'Suits',
-            'slug' => Str::slug('Suits'),
             'is_active' => true,
             'sort_order' => 0,
-        ], $overrides));
+        ], $overrides);
+
+        if (empty($attributes['slug'])) {
+            $attributes['slug'] = Str::slug($attributes['name']);
+        }
+
+        return Category::create($attributes);
     }
 
     public function test_guests_are_redirected_from_category_pages(): void
@@ -66,6 +72,13 @@ class CategoryManagementTest extends TestCase
     {
         $this->makeCategory(['name' => 'Turbans']);
         $this->makeCategory(['name' => 'Dupattas']);
+
+        $this->actingAs($this->admin)
+            ->get(route('categories.index', ['search' => 'Turbans']))
+            ->assertOk()
+            ->assertSee('Turbans')
+            ->assertDontSee('Dupattas');
+    }
 
     public function test_create_category_page_renders(): void
     {
@@ -196,14 +209,6 @@ class CategoryManagementTest extends TestCase
             ->get(route('categories.index'))
             ->assertOk()
             ->assertSee('1');
-    }
-}
-
-        $this->actingAs($this->admin)
-            ->get(route('categories.index', ['search' => 'Turbans']))
-            ->assertOk()
-            ->assertSee('Turbans')
-            ->assertDontSee('Dupattas');
     }
 
     public function test_category_filter_by_active_status(): void

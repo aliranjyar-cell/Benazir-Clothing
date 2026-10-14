@@ -35,7 +35,7 @@
             class="{{ $inputClass }} {{ $errors->has('slug') ? 'border-blush ring-blush/40' : '' }}"
         />
         <p class="mt-1.5 text-xs text-muted">
-            @if (filled($category->exists) && filled($category->slug))
+            @if ($category && $category->exists && filled($category->slug))
                 Auto-generated from the category name when left blank.
             @else
                 Leave blank to generate it automatically.
@@ -113,7 +113,8 @@
             <p class="{{ $errorClass }}" role="alert">{{ $message }}</p>
         @enderror
 
-        @if (filled($category->exists) && filled($category->image_path))
+        @if ($category && $category->exists && filled($category->image_path))
+        
             <div class="mt-3 flex items-center gap-3 rounded-xl bg-ivory/60 px-4 py-3">
                 <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-white/80 text-lilac-deep ring-1 ring-black/5">
                     <x-admin.icon name="image" class="h-5 w-5" />

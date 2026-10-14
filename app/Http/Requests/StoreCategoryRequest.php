@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Requests;
-
+use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -14,9 +14,8 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->guard('web')->check() && auth()->guard('web')->user()->can('create category');
+        return auth()->guard('admin')->check();
     }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -91,7 +90,7 @@ class StoreCategoryRequest extends FormRequest
         }
 
         while (Category::query()->where('slug', $slug)->exists()) {
-            $slug = $slugBase.'-'.$suffix++;
+            $slug = $slugBase . '-' . $suffix++;
         }
 
         $this->merge(['slug' => $slug]);

@@ -15,6 +15,12 @@ class CategoryController extends Controller
      */
     public function index(Request $request): View
     {
+        $sortable = ['name', 'created_at'];
+        $sort = in_array($request->query('sort'), $sortable, true) ? $request->query('sort') : 'created_at';
+        $direction = in_array($request->query('direction'), ['asc', 'desc'], true)
+            ? $request->query('direction')
+            : ($sort === 'created_at' ? 'desc' : 'asc');
+
         $categories = Category::query()
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->string('search');
@@ -33,12 +39,12 @@ class CategoryController extends Controller
             ->when($request->boolean('inactive_only'), function ($query) {
                 $query->where('is_active', false);
             })
-            ->orderBy($request->input('sort', 'name'))
+            ->orderBy($sort, $direction)
             ->orderBy('id', 'desc')
             ->paginate(20)
             ->withQueryString();
 
-        return view('categories.index', compact('categories'));
+        return view('categories.index', compact('categories', 'sort', 'direction'));
     }
 
     /**
