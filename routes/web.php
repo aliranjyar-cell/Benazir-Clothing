@@ -7,14 +7,14 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Storefront\NewsletterController;
+use App\Http\Controllers\Storefront\HomeController;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', HomeController::class)->name('store.home');
 
 Route::get('/dashboard', function () {
     $lowStockThreshold = 5;
@@ -112,8 +112,47 @@ Route::middleware('auth:admin')->group(function () {
         '/orders/{order}/link-customer',
         [OrderController::class, 'linkCustomer']
     )->name('admin.orders.link-customer');
-    
 });
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| AURELLE Storefront Routes
+|--------------------------------------------------------------------------
+*/
+
+// Homepage
+// Route::get('/', HomeController::class)
+//     ->name('store.home');
+
+// // Shop and product filtering
+// // HomeController currently returns storefront.home, so this is a
+// // temporary route until you create a dedicated ShopController.
+// Route::get('/shop', HomeController::class)
+//     ->name('store.shop');
+
+// // Product details
+// Route::get('/products/{slug}', [ProductController::class, 'show'])
+//     ->name('store.products.show');
+
+// // About page
+// Route::view('/about', 'storefront.about')
+//     ->name('store.about');
+
+// // Contact page
+// Route::view('/contact', 'storefront.contact')
+//     ->name('store.contact');
+
+// // Newsletter subscription
+// Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+//     ->middleware('throttle:5,1')
+//     ->name('store.newsletter.subscribe');
+
+
 // Route::middleware('auth')->group(function () {
 //     Route::resource('admins', AdminController::class);
 // });
