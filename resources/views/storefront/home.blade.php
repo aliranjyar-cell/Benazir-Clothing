@@ -130,7 +130,7 @@
                                     <!-- Main Portrait: Royal Punjabi Bridal Silhouette -->
                                     <img alt="Royal Punjabi Bride dressed in maroon bridal suit with heavy gold zardozi embroidery and heirloom phulkari dupatta in a palace courtyard"
                                         class="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
-                                        src="{{ $heroProduct?->images->first()?->image_path ? asset('storage/' . $heroProduct->images->first()->image_path) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuA_mA04qlOe4S_eeZFybxNgEqKVXmbuluMX5DOtB34oaFlV6fd9uxjY3glLNqnMUyuL0lsYxhr643GEd3EUNuDkv-75v2aqPnlWn2wvRaE26QER84dta_7HbkupM0f7bk3k_xWSsyVwkbD_avGzWIoUzBYmRYNzHzitr9XioywDKUP1c9Ylc-2bI_0-Uymu4IsXDmvk7-K7yaQ3w_CDfFQNnw4-NI9HBdjyzrZE9Yz9HDh2OYK0lNLe' }}" />
+                                        src="{{ asset('images/3wYWtlNhx3i1WvLlQtSUp4VXzxe8p683YEVxZ79C.jpg') }}" />
                                     <!-- Ambient Silk Light Wash Gradient -->
                                     <div
                                         class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/10 to-transparent opacity-60">

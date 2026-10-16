@@ -144,7 +144,7 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Storefront marketing pages
+| Storefront marketing pages $heroProduct?->images->first()?->image_path ? asset('storage/' . $heroProduct->images->first()->image_path) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuA_mA04qlOe4S_eeZFybxNgEqKVXmbuluMX5DOtB34oaFlV6fd9uxjY3glLNqnMUyuL0lsYxhr643GEd3EUNuDkv-75v2aqPnlWn2wvRaE26QER84dta_7HbkupM0f7bk3k_xWSsyVwkbD_avGzWIoUzBYmRYNzHzitr9XioywDKUP1c9Ylc-2bI_0-Uymu4IsXDmvk7-K7yaQ3w_CDfFQNnw4-NI9HBdjyzrZE9Yz9HDh2OYK0lNLe'
 |--------------------------------------------------------------------------
 */
 Route::view('/about', 'storefront.about')->name('store.about');
