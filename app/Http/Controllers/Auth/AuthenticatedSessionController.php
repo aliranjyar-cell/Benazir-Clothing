@@ -45,7 +45,11 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        // End both the admin and any customer session; the session is
+        // invalidated below regardless, but logging out each guard keeps
+        // the in-process guards consistent (e.g. for tests).
         Auth::guard('admin')->logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 

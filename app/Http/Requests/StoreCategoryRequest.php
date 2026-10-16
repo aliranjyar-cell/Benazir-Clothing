@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
@@ -25,7 +24,11 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:categories,slug'],
+            // Slug is required, but prepareForValidation generates it
+            // from the name when the field is left blank. Duplicates are
+            // unique-suffixed in passedValidation (never rejected), so no
+            // "unique" rule is attached here.
+            'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:10000'],
             'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:4096'],
@@ -47,6 +50,11 @@ class StoreCategoryRequest extends FormRequest
 
     /**
      * Prepare the data for validation.
+     *
+     * The slug is generated (and unique-suffixed) HERE, before
+     * validation, so the final value is included in validated() data.
+     * Merging in passedValidation() would be too late: the validator has
+     * already snapshotted the data.
      */
     public function prepareForValidation(): void
     {
@@ -54,8 +62,24 @@ class StoreCategoryRequest extends FormRequest
 
         // Generate a slug from the name when the user leaves it blank.
         if (empty($data['slug']) || ! is_string($data['slug']) || trim($data['slug']) === '') {
-            $data['slug'] = Str::slug($data['name'] ?? '');
+            $slug = Str::slug($data['name'] ?? '');
+        } else {
+            $slug = Str::slug($data['slug']);
         }
+
+        // Guarantee uniqueness, appending a suffix when the slug is
+        // already taken by another category. An empty slug is kept as-is
+        // so the required rule can report it.
+        if ($slug !== '') {
+            $base = $slug;
+            $suffix = 2;
+
+            while (Category::query()->where('slug', $slug)->exists()) {
+                $slug = $base . '-' . $suffix++;
+            }
+        }
+
+        $data['slug'] = $slug;
 
         // Normalise booleans / integers.
         if (isset($data['is_active'])) {
@@ -66,33 +90,5 @@ class StoreCategoryRequest extends FormRequest
         }
 
         $this->merge($data);
-    }
-
-    /**
-     * Handle a successful validation.
-     */
-    public function passedValidation(): void
-    {
-        // Guarantee uniqueness of the generated/provided slug, appending a
-        // suffix when the exact slug is already taken by another category.
-        $slug = $this->input('slug');
-        $slugBase = Str::slug($slug);
-
-        if ($slugBase === '') {
-            $slugBase = 'category';
-        }
-
-        $slug = $slugBase;
-        $suffix = 2;
-
-        while (Category::query()->where('slug', $slug)->doesntExist()) {
-            break;
-        }
-
-        while (Category::query()->where('slug', $slug)->exists()) {
-            $slug = $slugBase . '-' . $suffix++;
-        }
-
-        $this->merge(['slug' => $slug]);
     }
 }

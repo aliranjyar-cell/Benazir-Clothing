@@ -12,7 +12,7 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->guard('web')->check() && auth()->guard('web')->user()->can('update category');
+        return auth()->guard('admin')->check();
     }
 
     /**

@@ -24,10 +24,11 @@ class HomeController extends Controller
 
         $hasFilters = filled($filters['q'] ?? null) || filled($filters['category'] ?? null);
 
+        // New Arrivals: the latest active, sellable products. With no
+        // filters the newest products are shown; filters narrow them.
         $products = Product::query()
             ->active()
             ->whereHas('activeVariants')
-            ->when(! $hasFilters, fn($query) => $query->featured())
             ->when(filled($filters['category'] ?? null) && ! $selectedCategory, fn($query) => $query->whereRaw('1 = 0'))
             ->when($selectedCategory, fn($query) => $query->where('category_id', $selectedCategory->id))
             ->when(filled($filters['q'] ?? null), function ($query) use ($filters) {
@@ -43,18 +44,28 @@ class HomeController extends Controller
                 'category:id,name,slug',
                 'images' => fn($query) => $query->orderBy('sort_order'),
                 'activeVariants' => fn($query) => $query->orderBy('price'),
+                'primaryImage:id,product_id,image_path,alt_text',
+                'variants:id,product_id,is_active,stock_quantity,size,color',
             ])
             ->latest()
-            ->limit(8)
+            ->limit(12)
             ->get();
 
+        $totalProducts = Product::query()
+            ->active()
+            ->whereHas('activeVariants')
+            ->count();
+
+        // Category cards: every active category, so categories that
+        // currently have no products still appear (their pages show a
+        // graceful empty state).
         $categories = Category::query()
             ->active()
-            ->whereHas('products', fn($query) => $query->active()->whereHas('activeVariants'))
+            ->withCount(['products as visible_products_count' => fn($query) => $query->active()])
             ->with('parent:id,name')
             ->orderBy('sort_order')
             ->orderBy('name')
-            ->limit(6)
+            ->limit(8)
             ->get();
 
         $heroProduct = Product::query()
@@ -84,6 +95,7 @@ class HomeController extends Controller
             'content' => config('storefront.home'),
             'categories' => $categories,
             'products' => $products,
+            'totalProducts' => $totalProducts,
             'heroProduct' => $heroProduct,
             'storyImage' => $storyImage,
             'selectedCategory' => $selectedCategory,

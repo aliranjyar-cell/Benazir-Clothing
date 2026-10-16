@@ -67,19 +67,17 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
+        // A validation pass guarantees the slug is present (auto-generated
+        // from the name when blank and unique-suffixed in passedValidation).
         $category = Category::create([
             'parent_id' => $data['parent_id'] ?? null,
             'name' => $data['name'],
             'slug' => $data['slug'],
             'description' => $data['description'] ?? null,
-            'image_path' => $data['image'] ? $data['image']->store('categories', 'public') : null,
+            'image_path' => ($data['image'] ?? null)?->store('categories', 'public'),
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $data['is_active'] ?? true,
         ]);
-
-        if ($data['image'] ?? null) {
-            $category->update(['image_path' => $data['image']->store('categories', 'public')]);
-        }
 
         return redirect()
             ->route('categories.edit', $category)
