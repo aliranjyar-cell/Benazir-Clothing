@@ -43,6 +43,7 @@ class Order extends Model
 
     protected $fillable = [
         'order_number',
+        'checkout_token',
         'user_id',
         'customer_name',
         'customer_email',
@@ -94,6 +95,11 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function paymentCollector(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'payment_collected_by_admin_id');
     }
 
     public function items(): HasMany

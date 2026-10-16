@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\Order;
@@ -69,6 +70,15 @@ class OrderWorkflowService
             )) {
                 throw ValidationException::withMessages([
                     'status' => "An order cannot move from {$currentStatus} to {$newStatus}.",
+                ]);
+            }
+
+            if (
+                $newStatus === Order::STATUS_CANCELLED
+                && $order->payment_status === Order::PAYMENT_PAID
+            ) {
+                throw ValidationException::withMessages([
+                    'status' => 'A paid order cannot be cancelled until its payment has been refunded through an audited refund workflow.',
                 ]);
             }
 
@@ -163,6 +173,7 @@ class OrderWorkflowService
         }
 
         $order->stock_deducted_at = now();
+        $order->stock_restored_at = null;
     }
 
     /**
@@ -205,6 +216,6 @@ class OrderWorkflowService
 
         // Clear the marker only after all stock has been restored.
         $order->stock_deducted_at = null;
+        $order->stock_restored_at = now();
     }
 }
-

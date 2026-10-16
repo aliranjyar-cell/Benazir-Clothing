@@ -18,6 +18,8 @@ class OrderController extends Controller
 {
     public function index(Request $request): View
     {
+        $this->authorizeAdmin($request);
+
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:150'],
             'status' => ['nullable', Rule::in(Order::STATUSES)],
@@ -25,6 +27,8 @@ class OrderController extends Controller
                 'nullable',
                 Rule::in(Order::PAYMENT_STATUSES),
             ],
+            'date_from' => ['nullable', 'date_format:Y-m-d'],
+            'date_to' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:date_from'],
         ]);
 
         $orders = Order::query()
@@ -47,6 +51,14 @@ class OrderController extends Controller
                     'payment_status',
                     $status
                 )
+            )
+            ->when(
+                $filters['date_from'] ?? null,
+                fn($query, $date) => $query->whereDate('created_at', '>=', $date)
+            )
+            ->when(
+                $filters['date_to'] ?? null,
+                fn($query, $date) => $query->whereDate('created_at', '<=', $date)
             )
             ->latest()
             ->paginate(15)
@@ -76,10 +88,13 @@ class OrderController extends Controller
     }
 
 
-    public function show(Order $order): View
+    public function show(Request $request, Order $order): View
     {
+        $this->authorizeAdmin($request);
+
         $order->load([
             'user',
+            'paymentCollector',
             'items.product',
             'items.variant',
             'statusHistories.admin',
@@ -101,6 +116,8 @@ class OrderController extends Controller
         Order $order,
         OrderWorkflowService $workflow
     ): RedirectResponse {
+        $this->authorizeAdmin($request);
+
         $validated = $request->validate([
             'status' => [
                 'required',
@@ -124,18 +141,12 @@ class OrderController extends Controller
         Request $request,
         Order $order
     ): RedirectResponse {
+        $this->authorizeAdmin($request);
+
         $validated = $request->validate([
             'payment_status' => [
                 'required',
-                Rule::in([
-                    Order::PAYMENT_PAID,
-                    Order::PAYMENT_FAILED,
-                ]),
-            ],
-            'payment_method' => [
-                'nullable',
-                'string',
-                'max:50',
+                Rule::in([Order::PAYMENT_PAID]),
             ],
             'payment_reference' => [
                 'nullable',
@@ -144,25 +155,28 @@ class OrderController extends Controller
             ],
         ]);
 
-        DB::transaction(function () use ($order, $validated) {
+        $adminId = $request->user('admin')->id;
+
+        DB::transaction(function () use ($order, $validated, $adminId) {
             $lockedOrder = Order::query()
                 ->lockForUpdate()
                 ->findOrFail($order->id);
 
-            if ($lockedOrder->payment_status !== Order::PAYMENT_UNPAID) {
+            if (
+                $lockedOrder->payment_status !== Order::PAYMENT_UNPAID
+                || $lockedOrder->payment_method !== 'cash_on_delivery'
+                || $lockedOrder->status === Order::STATUS_CANCELLED
+            ) {
                 throw ValidationException::withMessages([
-                    'payment_status' => 'Only unpaid orders can be marked paid or failed through this action. Already processed payments require a dedicated correction or refund workflow.',
+                    'payment_status' => 'Only an unpaid cash-on-delivery order can be marked collected. Already processed payments require a dedicated correction or refund workflow.',
                 ]);
             }
 
-            $lockedOrder->payment_status = $validated['payment_status'];
-            $lockedOrder->payment_method =
-                $validated['payment_method'] ?? $lockedOrder->payment_method;
-            $lockedOrder->payment_reference =
-                $validated['payment_reference'] ?? $lockedOrder->payment_reference;
-            $lockedOrder->paid_at = $validated['payment_status'] === Order::PAYMENT_PAID
-                ? now()
-                : null;
+            $lockedOrder->payment_status = Order::PAYMENT_PAID;
+            $lockedOrder->payment_reference = $validated['payment_reference']
+                ?? $lockedOrder->payment_reference;
+            $lockedOrder->paid_at = now();
+            $lockedOrder->payment_collected_by_admin_id = $adminId;
 
             $lockedOrder->save();
         }, 3);
@@ -174,6 +188,8 @@ class OrderController extends Controller
 
     public function linkCustomer(Request $request, Order $order)
     {
+        $this->authorizeAdmin($request);
+
         $validated = $request->validate([
             'customer_id' => ['required', 'integer', 'exists:users,id'],
         ]);
@@ -207,6 +223,18 @@ class OrderController extends Controller
         return back()->with(
             'success',
             'Guest order linked to the customer successfully.'
+        );
+    }
+
+    private function authorizeAdmin(Request $request): void
+    {
+        $admin = $request->user('admin');
+
+        abort_unless(
+            $admin !== null
+                && $admin->status === 'active'
+                && in_array($admin->role, ['admin', 'superadmin'], true),
+            403
         );
     }
 }

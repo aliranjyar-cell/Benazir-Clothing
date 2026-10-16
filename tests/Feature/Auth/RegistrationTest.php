@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -25,7 +27,8 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertAuthenticatedAs(User::query()->where('email', 'test@example.com')->first(), 'web');
+        $response->assertRedirect(route('store.account', absolute: false));
+        $this->assertTrue(Hash::check('password', User::query()->firstOrFail()->password));
     }
 }

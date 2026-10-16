@@ -57,7 +57,7 @@ class CartService
      *
      * @return Collection<int, array{variant: ProductVariant, quantity: int, line_total: float, exceeds_stock: bool}>
      */
-    public function lines(): Collection
+    public function lines(bool $pruneStale = true): Collection
     {
         $entries = $this->entries();
 
@@ -81,7 +81,7 @@ class CartService
         // Prune entries that are no longer sellable.
         $stale = array_diff(array_keys($entries), $variants->keys()->all());
 
-        if ($stale !== []) {
+        if ($stale !== [] && $pruneStale) {
             $this->put(array_diff_key($this->entries(), array_flip($stale)));
         }
 

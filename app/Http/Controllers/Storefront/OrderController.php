@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
@@ -9,20 +10,22 @@ use Illuminate\View\View;
 class OrderController extends Controller
 {
     /**
-     * Order confirmation. Access is limited to the owning customer or
-     * to the browser session that just placed the order (guests).
+     * Guest orders use the unguessable checkout token; registered orders
+     * remain visible only to their owning customer.
      */
-    public function show(Request $request, Order $order): View
+    public function show(Request $request, string $token): View
     {
-        $sessionOrderIds = array_map(
-            'intval',
-            (array) $request->session()->get('storefront.recent_orders', [])
+        $order = Order::query()
+            ->where('checkout_token', $token)
+            ->firstOrFail();
+
+        $user = $request->user('web');
+        $isOwner = $user !== null && $order->user_id === $user->id;
+
+        abort_unless(
+            $order->user_id === null ? $user === null : $isOwner,
+            404
         );
-
-        $isOwner = $request->user() !== null
-            && $order->user_id === $request->user()->id;
-
-        abort_unless($isOwner || in_array($order->id, $sessionOrderIds, true), 404);
 
         $order->load('items');
 

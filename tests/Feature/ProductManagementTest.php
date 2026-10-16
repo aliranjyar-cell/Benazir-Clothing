@@ -443,10 +443,15 @@ class ProductManagementTest extends TestCase
     private function makeImage(Product $product, string $filename, bool $isPrimary = false): \App\Models\ProductImage
     {
         $path = 'products/'.$product->id.'/'.$filename;
+
+        // Actually write the file so storage assertions are meaningful.
+        Storage::disk('public')->put($path, 'fake-image-content');
+
         return $product->images()->create([
             'image_path' => $path,
             'alt_text' => $product->name,
             'sort_order' => $product->images()->count(),
+            'is_primary' => $isPrimary,
         ]);
     }
 }

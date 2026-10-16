@@ -59,6 +59,30 @@
                                 class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary font-label-uppercase text-[0.6rem] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{ $cartCount }}</span>
                         @endif
                     </a>
+                    <a aria-label="{{ auth('web')->check() ? 'Customer account' : 'Customer sign in' }}"
+                        title="{{ auth('web')->check() ? 'Customer account' : 'Customer sign in' }}"
+                        class="text-on-surface-variant hover:text-primary transition-colors p-1"
+                        href="{{ auth('web')->check() ? route('store.account') : route('store.login') }}">
+                        <span class="material-symbols-outlined text-xl">account_circle</span>
+                    </a>
+                    @if (auth('web')->check())
+                        <div
+                            class="hidden lg:flex items-center gap-space-sm font-label-uppercase text-label-uppercase text-on-surface-variant">
+                            <a class="hover:text-primary transition-colors"
+                                href="{{ route('store.account') }}">Account</a>
+                            <form method="POST" action="{{ route('store.logout') }}">
+                                @csrf
+                                <button class="hover:text-primary transition-colors" type="submit">Sign out</button>
+                            </form>
+                        </div>
+                    @else
+                        <div
+                            class="hidden sm:flex items-center gap-space-sm font-label-uppercase text-label-uppercase text-on-surface-variant">
+                            <a class="hover:text-primary transition-colors" href="{{ route('store.login') }}">Sign
+                                in</a>
+                            <a class="hover:text-primary transition-colors" href="{{ route('register') }}">Register</a>
+                        </div>
+                    @endif
                 </div>
             </div>
             <nav class="flex items-center justify-center gap-space-lg overflow-x-auto py-1"

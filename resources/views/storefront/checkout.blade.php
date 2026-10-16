@@ -23,7 +23,7 @@
             <div class="mt-space-2xl max-w-4xl">
                 <h1 class="font-display-hero font-headline-lg text-headline-lg text-primary">Checkout</h1>
                 <p class="font-body-lg text-body-lg text-on-surface-variant mt-space-sm">
-                    Complete your order securely. A confirmation email will be sent.
+                    Complete your delivery details and place your order with Cash on Delivery.
                 </p>
 
                 <div class="mt-space-2xl grid gap-space-xl md:grid-cols-2">
@@ -31,22 +31,29 @@
                         class="rounded-xl border border-outline-variant bg-surface-container-lowest p-space-xl">
                         <h2 class="font-display-hero font-headline-lg text-headline-lg text-primary">Delivery details</h2>
 
-                        @if (session('validation_error'))
+                        @if ($errors->any())
                             <div role="alert"
                                 class="mt-space-md rounded-lg border border-error/30 bg-error-container/10 px-space-md py-space-md font-body-sm text-body-sm text-error">
-                                {{ session('validation_error') }}
+                                <ul class="list-inside list-disc space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
                         @endif
 
                         <form method="POST" action="{{ route('store.checkout.place') }}"
                             class="mt-space-md grid gap-space-md">
                             @csrf
+                            <input type="hidden" name="checkout_token" value="{{ $checkoutToken }}">
                             <input type="hidden" name="payment_method" value="{{ $defaultPaymentMethod }}">
 
                             <div class="grid gap-space-md sm:grid-cols-2">
                                 <div class="space-y-space-xs">
-                                    <label class="font-body-sm text-body-sm text-on-surface-variant">Full name</label>
-                                    <input name="customer_name" value="{{ old('customer_name') }}"
+                                    <label for="customer_name"
+                                        class="font-body-sm text-body-sm text-on-surface-variant">Full name</label>
+                                    <input id="customer_name" name="customer_name"
+                                        value="{{ old('customer_name', $customer?->name) }}" required
                                         class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
                                         placeholder="Aziz Ahmed" />
                                     @error('customer_name')
@@ -54,8 +61,10 @@
                                     @enderror
                                 </div>
                                 <div class="space-y-space-xs">
-                                    <label class="font-body-sm text-body-sm text-on-surface-variant">Email</label>
-                                    <input type="email" name="customer_email" value="{{ old('customer_email') }}"
+                                    <label for="customer_email"
+                                        class="font-body-sm text-body-sm text-on-surface-variant">Email</label>
+                                    <input id="customer_email" type="email" name="customer_email"
+                                        value="{{ old('customer_email', $customer?->email) }}" required
                                         class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
                                         placeholder="you@example.com" />
                                     @error('customer_email')
@@ -65,8 +74,10 @@
                             </div>
 
                             <div class="space-y-space-xs">
-                                <label class="font-body-sm text-body-sm text-on-surface-variant">Phone</label>
-                                <input name="customer_phone" value="{{ old('customer_phone') }}"
+                                <label for="customer_phone"
+                                    class="font-body-sm text-body-sm text-on-surface-variant">Phone</label>
+                                <input id="customer_phone" name="customer_phone"
+                                    value="{{ old('customer_phone', $customer?->phone) }}" required
                                     class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
                                     placeholder="+92 300 0000000" />
                                 @error('customer_phone')
@@ -75,8 +86,10 @@
                             </div>
 
                             <div class="space-y-space-xs">
-                                <label class="font-body-sm text-body-sm text-on-surface-variant">Address line 1</label>
-                                <input name="shipping_address_line_1" value="{{ old('shipping_address_line_1') }}"
+                                <label for="shipping_address_line_1"
+                                    class="font-body-sm text-body-sm text-on-surface-variant">Address line 1</label>
+                                <input id="shipping_address_line_1" name="shipping_address_line_1"
+                                    value="{{ old('shipping_address_line_1') }}" required
                                     class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
                                     placeholder="House no., street" />
                                 @error('shipping_address_line_1')
@@ -84,10 +97,25 @@
                                 @enderror
                             </div>
 
+                            <div class="space-y-space-xs">
+                                <label for="shipping_address_line_2"
+                                    class="font-body-sm text-body-sm text-on-surface-variant">Address line 2 <span
+                                        class="text-on-surface-variant/70">(optional)</span></label>
+                                <input id="shipping_address_line_2" name="shipping_address_line_2"
+                                    value="{{ old('shipping_address_line_2') }}"
+                                    class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
+                                    placeholder="Apartment, suite, unit" />
+                                @error('shipping_address_line_2')
+                                    <p class="font-label-uppercase text-label-uppercase text-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <div class="grid gap-space-md sm:grid-cols-3">
                                 <div class="space-y-space-xs">
-                                    <label class="font-body-sm text-body-sm text-on-surface-variant">City</label>
-                                    <input name="shipping_city" value="{{ old('shipping_city') }}"
+                                    <label for="shipping_city"
+                                        class="font-body-sm text-body-sm text-on-surface-variant">City</label>
+                                    <input id="shipping_city" name="shipping_city" value="{{ old('shipping_city') }}"
+                                        required
                                         class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
                                         placeholder="Lahore" />
                                     @error('shipping_city')
@@ -95,22 +123,35 @@
                                     @enderror
                                 </div>
                                 <div class="space-y-space-xs">
-                                    <label class="font-body-sm text-body-sm text-on-surface-variant">State / region</label>
-                                    <input name="shipping_state" value="{{ old('shipping_state') }}"
+                                    <label for="shipping_state"
+                                        class="font-body-sm text-body-sm text-on-surface-variant">State / region</label>
+                                    <input id="shipping_state" name="shipping_state" value="{{ old('shipping_state') }}"
+                                        required
                                         class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
                                         placeholder="Punjab" />
+                                    @error('shipping_state')
+                                        <p class="font-label-uppercase text-label-uppercase text-error">{{ $message }}</p>
+                                    @enderror
                                 </div>
                                 <div class="space-y-space-xs">
-                                    <label class="font-body-sm text-body-sm text-on-surface-variant">Postal code</label>
-                                    <input name="shipping_postal_code" value="{{ old('shipping_postal_code') }}"
+                                    <label for="shipping_postal_code"
+                                        class="font-body-sm text-body-sm text-on-surface-variant">Postal code</label>
+                                    <input id="shipping_postal_code" name="shipping_postal_code"
+                                        value="{{ old('shipping_postal_code') }}" required
                                         class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
                                         placeholder="54000" />
+                                    @error('shipping_postal_code')
+                                        <p class="font-label-uppercase text-label-uppercase text-error">{{ $message }}
+                                        </p>
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="space-y-space-xs">
-                                <label class="font-body-sm text-body-sm text-on-surface-variant">Country</label>
-                                <input name="shipping_country" value="{{ old('shipping_country') ?? 'Pakistan' }}"
+                                <label for="shipping_country"
+                                    class="font-body-sm text-body-sm text-on-surface-variant">Country</label>
+                                <input id="shipping_country" name="shipping_country"
+                                    value="{{ old('shipping_country', 'Pakistan') }}" required
                                     class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all" />
                                 @error('shipping_country')
                                     <p class="font-label-uppercase text-label-uppercase text-error">{{ $message }}</p>

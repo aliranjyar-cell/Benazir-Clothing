@@ -22,6 +22,10 @@
         ];
 
         $formatLabel = fn($value) => str($value)->replace('_', ' ')->title();
+        $formatPaymentLabel = fn($order) => $order->payment_method === 'cash_on_delivery' &&
+        $order->payment_status === 'unpaid'
+            ? 'Pending collection'
+            : $formatLabel($order->payment_status);
 
         $transitions = [
             'pending' => ['confirmed', 'cancelled'],
@@ -34,7 +38,10 @@
 
         $nextStatuses = $transitions[$order->status] ?? [];
 
-        $canUpdatePayment = in_array($order->payment_status, ['unpaid', 'failed'], true);
+        $canUpdatePayment =
+            $order->payment_status === 'unpaid' &&
+            $order->payment_method === 'cash_on_delivery' &&
+            $order->status !== 'cancelled';
     @endphp
 
     <div class="space-y-6">
@@ -79,7 +86,7 @@
                         class="inline-flex items-center gap-2 rounded-xl border border-black/5 bg-white px-3.5 py-2.5 text-sm text-ink/65 shadow-sm">
                         <span
                             class="h-2 w-2 rounded-full {{ $order->payment_status === 'paid' ? 'bg-emerald-500' : ($order->payment_status === 'failed' ? 'bg-rose-500' : 'bg-amber-500') }}"></span>
-                        Payment: <span class="font-semibold text-ink">{{ $formatLabel($order->payment_status) }}</span>
+                        Payment: <span class="font-semibold text-ink">{{ $formatPaymentLabel($order) }}</span>
                     </span>
                 </div>
             </div>
@@ -189,13 +196,11 @@
                                     {{ number_format((float) $order->subtotal, 2) }}</span>
                             </div>
 
-                            @if ((float) $order->discount_total > 0)
-                                <div class="flex justify-between gap-4 text-emerald-800">
-                                    <span>Discount</span>
-                                    <span class="tabular-nums">− {{ $order->currency }}
-                                        {{ number_format((float) $order->discount_total, 2) }}</span>
-                                </div>
-                            @endif
+                            <div class="flex justify-between gap-4 text-emerald-800">
+                                <span>Discount</span>
+                                <span class="tabular-nums">− {{ $order->currency }}
+                                    {{ number_format((float) $order->discount_total, 2) }}</span>
+                            </div>
 
                             <div class="flex justify-between gap-4 text-ink/60">
                                 <span>Shipping</span>
@@ -568,7 +573,7 @@
                             <p class="text-xs text-ink/50">Payment status</p>
                             <span
                                 class="mt-1.5 inline-flex rounded-full px-2.5 py-1 text-xs font-medium capitalize ring-1 ring-inset {{ $paymentStyles[$order->payment_status] ?? 'bg-slate-50 text-slate-700 ring-slate-200' }}">
-                                {{ $formatLabel($order->payment_status) }}
+                                {{ $formatPaymentLabel($order) }}
                             </span>
                         </div>
                         <div class="text-right">
@@ -600,56 +605,53 @@
                         </div>
                     @endif
 
+                    @if ($order->paymentCollector)
+                        <div class="mt-2 flex justify-between gap-3 text-xs">
+                            <span class="text-ink/50">Collected by</span>
+                            <span class="text-right text-ink/70">{{ $order->paymentCollector->first_name }}
+                                {{ $order->paymentCollector->last_name }}</span>
+                        </div>
+                    @endif
+
                     @if ($canUpdatePayment)
                         <form method="POST" action="{{ route('admin.orders.payment.update', $order) }}"
                             class="mt-4 space-y-3 border-t border-black/5 pt-4">
                             @csrf
                             @method('PATCH')
-
-                            <div>
-                                <label for="payment_status" class="mb-1.5 block text-xs font-medium text-ink/70">Record
-                                    payment as</label>
-                                <select id="payment_status" name="payment_status" required
-                                    class="w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-ink focus:border-lilac focus:outline-none focus:ring-2 focus:ring-lilac/30">
-                                    <option value="paid" @selected(old('payment_status') === 'paid')>Paid / verified</option>
-                                    <option value="failed" @selected(old('payment_status') === 'failed')>Failed</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="payment_method" class="mb-1.5 block text-xs font-medium text-ink/70">Payment
-                                    method</label>
-                                <input id="payment_method" name="payment_method"
-                                    value="{{ old('payment_method', $order->payment_method) }}" maxlength="50"
-                                    placeholder="e.g. Cash on delivery"
-                                    class="w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink/35 focus:border-lilac focus:outline-none focus:ring-2 focus:ring-lilac/30">
-                            </div>
+                            <input type="hidden" name="payment_status" value="paid">
 
                             <div>
                                 <label for="payment_reference"
-                                    class="mb-1.5 block text-xs font-medium text-ink/70">Payment reference <span
+                                    class="mb-1.5 block text-xs font-medium text-ink/70">Receipt reference <span
                                         class="font-normal text-ink/40">(optional)</span></label>
                                 <input id="payment_reference" name="payment_reference"
                                     value="{{ old('payment_reference', $order->payment_reference) }}" maxlength="255"
-                                    placeholder="Transaction or receipt reference"
+                                    placeholder="Receipt or collection reference"
                                     class="w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink/35 focus:border-lilac focus:outline-none focus:ring-2 focus:ring-lilac/30">
                             </div>
 
                             <button type="submit"
                                 class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm font-semibold text-ink transition hover:border-lilac hover:bg-lilac/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-lilac focus-visible:ring-offset-2">
-                                Save payment status
+                                Mark payment collected
                             </button>
 
                             <p class="text-xs leading-5 text-ink/50">
-                                Verify the payment externally before marking it paid. This action does not change the
-                                fulfillment status.
+                                Use only after the cash has been received. This action does not change fulfillment status
+                                and cannot be repeated.
                             </p>
                         </form>
                     @else
                         <div class="mt-4 rounded-xl bg-ivory/60 px-3.5 py-3">
                             <p class="text-xs leading-5 text-ink/60">
-                                This payment has already been processed. Refunds and payment corrections should use a
-                                separate audited workflow.
+                                @if ($order->payment_status === 'paid')
+                                    Payment was collected
+                                    {{ $order->paid_at?->format('d M Y, h:i A') ?? 'at an unrecorded time' }}.
+                                @elseif ($order->payment_method !== 'cash_on_delivery')
+                                    Collection confirmation is available only for cash-on-delivery orders.
+                                @else
+                                    This payment cannot be changed through collection. Corrections and refunds require a
+                                    separate audited workflow.
+                                @endif
                             </p>
                         </div>
                     @endif

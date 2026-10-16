@@ -4,11 +4,19 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
-use App\Http\Controllers\Storefront\NewsletterController;
 use App\Http\Controllers\Storefront\HomeController;
+use App\Http\Controllers\Storefront\ShopController;
+use App\Http\Controllers\Storefront\CartController;
+use App\Http\Controllers\Storefront\AccountController;
+use App\Http\Controllers\Storefront\CheckoutController;
+use App\Http\Controllers\Storefront\CustomerAuthController;
+use App\Http\Controllers\Storefront\WishlistController;
+use App\Http\Controllers\Storefront\OrderController as StorefrontOrderController;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -60,6 +68,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::patch('/products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])
         ->name('products.toggle-status');
 
+    Route::get('/admin/products/{product}', [ProductController::class, 'show'])
+        ->name('products.show');
 
 
     Route::get('/inventory', [InventoryController::class, 'index'])->name('admin.inventory.index');
@@ -119,42 +129,78 @@ Route::middleware('auth:admin')->group(function () {
 
 
 
+
+
+
+Route::get('/', HomeController::class)
+    ->name('store.home');
+
+
+Route::middleware('auth')->group(function () {
+    Route::resource('admins', AdminController::class);
+});
+
+
+
 /*
 |--------------------------------------------------------------------------
-| AURELLE Storefront Routes
+| Storefront marketing pages
 |--------------------------------------------------------------------------
 */
+Route::view('/about', 'storefront.about')->name('store.about');
+Route::view('/contact', 'storefront.contact')->name('store.contact');
 
-// Homepage
-// Route::get('/', HomeController::class)
-//     ->name('store.home');
+Route::get('/shop', [ShopController::class, 'index'])->name('store.shop');
 
-// // Shop and product filtering
-// // HomeController currently returns storefront.home, so this is a
-// // temporary route until you create a dedicated ShopController.
-// Route::get('/shop', HomeController::class)
-//     ->name('store.shop');
+Route::get('/shop/{category}', [ShopController::class, 'index'])->name('store.shop.category');
 
-// // Product details
-// Route::get('/products/{slug}', [ProductController::class, 'show'])
-//     ->name('store.products.show');
+Route::get('/products/{product}', [StorefrontProductController::class, 'show'])->name('store.products.show');
 
-// // About page
-// Route::view('/about', 'storefront.about')
-//     ->name('store.about');
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('store.wishlist.index');
 
-// // Contact page
-// Route::view('/contact', 'storefront.contact')
-//     ->name('store.contact');
+Route::post('/wishlist/{product}/toggle', [WishlistController::class, 'toggle'])->name('store.wishlist.toggle');
 
-// // Newsletter subscription
-// Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
-//     ->middleware('throttle:5,1')
-//     ->name('store.newsletter.subscribe');
+Route::post('/wishlist', [WishlistController::class, 'store'])->name('store.wishlist.store');
 
+Route::delete('/wishlist/{product}', [WishlistController::class, 'destroy'])->name('store.wishlist.destroy');
 
-// Route::middleware('auth')->group(function () {
-//     Route::resource('admins', AdminController::class);
-// });
+Route::get('/cart', [CartController::class, 'index'])->name('store.cart.index');
+
+Route::post('/cart/add', [CartController::class, 'store'])->name('store.cart.add');
+
+Route::post('/cart/update', [CartController::class, 'update'])->name('store.cart.update');
+
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('store.cart.remove');
+
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('store.cart.clear');
+
+Route::get('/checkout', [CheckoutController::class, 'show'])->name('store.checkout.index');
+
+Route::post('/checkout/place', [CheckoutController::class, 'store'])->name('store.checkout.place');
+
+Route::middleware('guest:web')->group(function () {
+    Route::get('/account/login', [CustomerAuthController::class, 'create'])->name('store.login');
+    Route::post('/account/login', [CustomerAuthController::class, 'store']);
+});
+
+Route::post('/account/logout', [CustomerAuthController::class, 'destroy'])
+    ->middleware('auth.customer:web')
+    ->name('store.logout');
+
+Route::get('/order-confirmation/{token}', [StorefrontOrderController::class, 'show'])
+    ->whereUuid('token')
+    ->name('store.orders.show');
+
+// Route::get('/orders/{order}/confirm', [StorefrontOrderController::class, 'confirm'])->name('store.orders.confirm');
+
+Route::middleware('auth.customer:web')->group(function () {
+    Route::get('/account', [AccountController::class, 'show'])->name('store.account');
+    Route::get('/account/profile', [AccountController::class, 'profile'])->name('store.account.profile');
+    Route::get('/account/orders', [AccountController::class, 'orders'])->name('store.account.orders');
+    Route::patch('/account', [AccountController::class, 'update'])->name('store.account.update');
+    Route::get('/account/orders/{order}', [AccountController::class, 'order'])
+        ->name('store.account.orders.show');
+});
+
 
 require __DIR__ . '/auth.php';

@@ -125,17 +125,32 @@ class CategoryManagementTest extends TestCase
 
     public function test_store_category_rejects_invalid_parent_relationship(): void
     {
+        // A parent that does not exist must be rejected by the exists rule.
+        $this->actingAs($this->admin)
+            ->post(route('categories.store'), [
+                'name' => 'Orphan',
+                'slug' => 'orphan',
+                'parent_id' => 999999,
+            ])
+            ->assertSessionHasErrors(['parent_id']);
+
+        // Legitimate nesting (grandparent chains) stays allowed: a new
+        // category may sit beneath a category that itself has a parent.
         $parent = $this->makeCategory(['name' => 'Parent']);
         $child = $this->makeCategory(['name' => 'Child', 'parent_id' => $parent->id]);
 
-        // A category cannot be its own parent.
         $this->actingAs($this->admin)
             ->post(route('categories.store'), [
-                'name' => 'Self Parent',
-                'slug' => 'self-parent',
+                'name' => 'Grandchild',
+                'slug' => 'grandchild',
                 'parent_id' => $child->id,
             ])
-            ->assertSessionHasErrors(['parent_id' => 'A category cannot be its own parent.']);
+            ->assertRedirect(route('categories.edit', Category::latest('id')->first()));
+
+        $this->assertDatabaseHas('categories', [
+            'name' => 'Grandchild',
+            'parent_id' => $child->id,
+        ]);
     }
 
     public function test_update_category_validates_parent_cycle(): void
@@ -181,7 +196,9 @@ class CategoryManagementTest extends TestCase
         $this->actingAs($this->admin)
             ->delete(route('categories.destroy', $category));
 
-        $this->assertNull($category->fresh()->products()->first()->category_id);
+        // The product is unlinked (category_id set to null) and the
+        // category itself is soft-deactivated.
+        $this->assertNull($product->fresh()->category_id);
         $this->assertFalse($category->fresh()->is_active);
     }
 
@@ -213,8 +230,10 @@ class CategoryManagementTest extends TestCase
 
     public function test_category_filter_by_active_status(): void
     {
-        $active = $this->makeCategory(['name' => 'Active', 'is_active' => true]);
-        $inactive = $this->makeCategory(['name' => 'Inactive', 'is_active' => false]);
+        // Use distinctive names: the index UI itself contains the words
+        // "Active"/"Inactive" (filter options and status badges).
+        $active = $this->makeCategory(['name' => 'Visible Kurta', 'is_active' => true]);
+        $inactive = $this->makeCategory(['name' => 'Hidden Lehenga', 'is_active' => false]);
 
         $this->actingAs($this->admin)
             ->get(route('categories.index', ['active_only' => '1']))

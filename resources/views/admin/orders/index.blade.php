@@ -23,6 +23,10 @@
         ];
 
         $formatLabel = fn($value) => str($value)->replace('_', ' ')->title();
+        $formatPaymentLabel = fn($order) => $order->payment_method === 'cash_on_delivery' &&
+        $order->payment_status === 'unpaid'
+            ? 'Pending collection'
+            : $formatLabel($order->payment_status);
     @endphp
 
     <div class="space-y-6">
@@ -155,7 +159,7 @@
 
                 <form method="GET" action="{{ route('admin.orders.index') }}"
                     class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-12">
-                    <div class="relative md:col-span-5">
+                    <div class="relative md:col-span-4">
                         <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                             <circle cx="11" cy="11" r="7" />
@@ -190,9 +194,23 @@
                         </select>
                     </div>
 
-                    <div class="flex gap-2 md:col-span-2">
+                    <div class="grid grid-cols-2 gap-2 md:col-span-3">
+                        <div>
+                            <label for="date_from" class="mb-1 block text-xs font-medium text-ink/55">From</label>
+                            <input id="date_from" type="date" name="date_from"
+                                value="{{ $filters['date_from'] ?? '' }}"
+                                class="w-full min-w-0 rounded-xl border border-black/10 bg-white px-2 py-2.5 text-sm text-ink focus:border-lilac focus:outline-none focus:ring-2 focus:ring-lilac/30">
+                        </div>
+                        <div>
+                            <label for="date_to" class="mb-1 block text-xs font-medium text-ink/55">To</label>
+                            <input id="date_to" type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}"
+                                class="w-full min-w-0 rounded-xl border border-black/10 bg-white px-2 py-2.5 text-sm text-ink focus:border-lilac focus:outline-none focus:ring-2 focus:ring-lilac/30">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-2 md:col-span-12">
                         <button type="submit"
-                            class="inline-flex flex-1 items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-white transition hover:bg-ink/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-lilac focus-visible:ring-offset-2">
+                            class="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-white transition hover:bg-ink/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-lilac focus-visible:ring-offset-2">
                             Filter
                         </button>
                         @if (count(array_filter($filters, fn($value) => filled($value))) > 0)
@@ -269,7 +287,7 @@
                                     <td class="px-4 py-4">
                                         <span
                                             class="inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium capitalize ring-1 ring-inset {{ $paymentStyles[$order->payment_status] ?? 'bg-slate-50 text-slate-700 ring-slate-200' }}">
-                                            {{ $formatLabel($order->payment_status) }}
+                                            {{ $formatPaymentLabel($order) }}
                                         </span>
                                     </td>
 

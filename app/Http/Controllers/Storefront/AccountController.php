@@ -17,15 +17,31 @@ class AccountController extends Controller
     public function show(Request $request): View
     {
         $user = $request->user();
-
-        $orders = $user->orders()
-            ->withCount('items')
-            ->latest()
-            ->paginate(10);
+        $orders = $user->orders()->latest()->limit(5)->get();
 
         return view('storefront.account.show', [
             'customer' => $user,
             'orders' => $orders,
+            'page' => 'dashboard',
+            'orderCount' => $user->orders()->count(),
+        ]);
+    }
+
+    public function profile(Request $request): View
+    {
+        return view('storefront.account.show', [
+            'customer' => $request->user(),
+            'orders' => collect(),
+            'page' => 'profile',
+        ]);
+    }
+
+    public function orders(Request $request): View
+    {
+        return view('storefront.account.show', [
+            'customer' => $request->user(),
+            'orders' => $request->user()->orders()->latest()->paginate(10),
+            'page' => 'orders',
         ]);
     }
 
@@ -39,7 +55,9 @@ class AccountController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => [
-                'required', 'email', 'max:255',
+                'required',
+                'email',
+                'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
             'phone' => ['nullable', 'string', 'max:30'],
@@ -57,12 +75,11 @@ class AccountController extends Controller
      */
     public function order(Request $request, Order $order): View
     {
-        abort_unless(
-            $order->user_id !== null && $order->user_id === $request->user()->id,
-            404
-        );
+        $order = $request->user()->orders()
+            ->whereKey($order->getKey())
+            ->firstOrFail();
 
-        $order->load('items');
+        $order->load(['items', 'statusHistories']);
 
         return view('storefront.checkout.success', [
             'order' => $order,
