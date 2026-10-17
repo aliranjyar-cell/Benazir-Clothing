@@ -12,6 +12,10 @@ use Illuminate\Validation\ValidationException;
 
 class OrderWorkflowService
 {
+    public function __construct(
+        private readonly OrderNotificationService $notifications
+    ) {}
+
     /**
      * Change an order's fulfillment status safely.
      */
@@ -26,7 +30,7 @@ class OrderWorkflowService
             ]);
         }
 
-        return DB::transaction(function () use (
+        $updatedOrder = DB::transaction(function () use (
             $orderId,
             $newStatus,
             $note
@@ -119,6 +123,17 @@ class OrderWorkflowService
                 'statusHistories.admin',
             ]);
         }, 3);
+
+        if (in_array($newStatus, [
+            Order::STATUS_CONFIRMED,
+            Order::STATUS_SHIPPED,
+            Order::STATUS_DELIVERED,
+            Order::STATUS_CANCELLED,
+        ], true)) {
+            $this->notifications->statusChanged($updatedOrder, $newStatus);
+        }
+
+        return $updatedOrder;
     }
 
     /**

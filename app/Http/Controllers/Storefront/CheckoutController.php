@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderStatusHistory;
 use App\Models\ProductVariant;
 use App\Services\CartService;
+use App\Services\OrderNotificationService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,7 +67,7 @@ class CheckoutController extends Controller
      * transaction. Payment stays "unpaid": cash-on-delivery orders are
      * only ever marked paid later through the admin panel.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, OrderNotificationService $notifications): RedirectResponse
     {
         $validated = $request->validate([
             'checkout_token' => ['required', 'uuid'],
@@ -266,6 +267,8 @@ class CheckoutController extends Controller
                 ->withInput()
                 ->withErrors(['checkout' => 'We could not place your order. Your bag is unchanged; please try again.']);
         }
+
+        $notifications->orderPlaced($order);
 
         return $this->finishCheckout($request, $order, $checkoutToken);
     }

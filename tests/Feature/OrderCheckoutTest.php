@@ -7,8 +7,10 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
+use App\Mail\OrderNotificationMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -49,11 +51,86 @@ class OrderCheckoutTest extends TestCase
             ->assertOk()
             ->assertSee('Order received')
             ->assertSee($order->order_number)
+            ->assertSee($order->checkout_token)
+            ->assertSee('verification are not configured')
             ->assertSee('Cash on')
             ->assertSee('Delivery')
             ->assertSee('Burgundy')
             ->assertSee('Lahore')
             ->assertSee('54000');
+
+        $this->get(route('store.orders.show', $order->checkout_token))
+            ->assertOk()
+            ->assertSee($order->order_number);
+
+        $this->assertDatabaseCount('orders', 1);
+        $this->assertDatabaseCount('order_items', 1);
+    }
+
+    public function test_checkout_queues_customer_and_admin_notifications_once(): void
+    {
+        Mail::fake();
+        config(['storefront.notifications.admin_email' => 'orders@benazir.example']);
+
+        $variant = $this->makeVariant();
+        $checkoutToken = $this->startCheckout($variant, 1);
+        $payload = $this->checkoutData(['checkout_token' => $checkoutToken]);
+
+        $this->post(route('store.checkout.place'), $payload)->assertRedirect();
+        $order = Order::query()->firstOrFail();
+
+        Mail::assertQueued(OrderNotificationMail::class, 2);
+        Mail::assertQueued(
+            OrderNotificationMail::class,
+            fn(OrderNotificationMail $mail) =>
+            $mail->notificationType === 'placed' && $mail->hasTo('simran@example.com')
+        );
+        Mail::assertQueued(
+            OrderNotificationMail::class,
+            fn(OrderNotificationMail $mail) =>
+            $mail->notificationType === 'new_order' && $mail->hasTo('orders@benazir.example')
+        );
+
+        $this->post(route('store.checkout.place'), $payload)->assertRedirect();
+
+        Mail::assertQueued(OrderNotificationMail::class, 2);
+        $this->assertDatabaseCount('orders', 1);
+        $this->assertSame(Order::STATUS_PENDING, $order->fresh()->status);
+    }
+
+    public function test_order_notification_renders_order_and_delivery_details(): void
+    {
+        $order = $this->makeOrder();
+        $order->items()->create([
+            'product_name' => 'Snapshot Punjabi Suit',
+            'sku' => 'BEN-SNAPSHOT',
+            'size' => 'M',
+            'color' => 'Burgundy',
+            'quantity' => 2,
+            'unit_price' => '1299.95',
+            'line_total' => '2599.90',
+        ]);
+
+        $html = (new OrderNotificationMail($order->load('items'), 'placed'))->render();
+
+        $this->assertStringContainsString('BENAZIR', $html);
+        $this->assertStringContainsString($order->order_number, $html);
+        $this->assertStringContainsString('Snapshot Punjabi Suit', $html);
+        $this->assertStringContainsString('2,599.90', $html);
+        $this->assertStringContainsString('Cash on Delivery', $html);
+        $this->assertStringContainsString('12 Garden Town', $html);
+        $this->assertStringNotContainsString('checkout_token', $html);
+    }
+
+    public function test_order_notification_sends_through_the_local_log_mailer(): void
+    {
+        $order = $this->makeOrder();
+
+        $sentMessage = Mail::mailer('log')->to('preview@example.test')->send(
+            new OrderNotificationMail($order, 'placed')
+        );
+
+        $this->assertNotNull($sentMessage);
     }
 
     public function test_authenticated_customer_checkout_links_order_to_customer(): void
@@ -85,6 +162,119 @@ class OrderCheckoutTest extends TestCase
     {
         $this->get(route('store.orders.show', Str::uuid()))->assertNotFound();
         $this->get('/order-confirmation/1')->assertNotFound();
+    }
+
+    public function test_guest_can_track_order_with_private_token_without_exposing_personal_data(): void
+    {
+        $order = $this->makeOrder();
+        $token = (string) Str::uuid();
+        $order->update([
+            'checkout_token' => $token,
+            'customer_name' => 'Private Recipient',
+            'customer_email' => 'private-recipient@example.com',
+            'customer_phone' => '+923001112233',
+            'shipping_address_line_1' => 'Secret Street 42',
+            'shipping_address_line_2' => 'Private Apartment',
+            'shipping_city' => 'Lahore',
+            'shipping_state' => 'Punjab',
+            'shipping_postal_code' => '54000',
+            'shipping_country' => 'Pakistan',
+            'status' => Order::STATUS_SHIPPED,
+        ]);
+        $order->items()->create([
+            'product_name' => 'Snapshot Punjabi Suit',
+            'sku' => 'BEN-TRACK-01',
+            'size' => 'M',
+            'color' => 'Burgundy',
+            'quantity' => 2,
+            'unit_price' => '1299.95',
+            'line_total' => '2599.90',
+        ]);
+        $order->statusHistories()->create([
+            'from_status' => null,
+            'to_status' => Order::STATUS_PENDING,
+            'created_at' => $order->created_at,
+        ]);
+        $order->statusHistories()->create([
+            'from_status' => Order::STATUS_PROCESSING,
+            'to_status' => Order::STATUS_SHIPPED,
+            'created_at' => now(),
+        ]);
+
+        $this->get(route('store.orders.track'))
+            ->assertOk()
+            ->assertSee('Track an order')
+            ->assertSee('tracking_token');
+
+        $this->post(route('store.orders.track.submit'), [
+            'tracking_token' => $token,
+        ])
+            ->assertOk()
+            ->assertSee($order->order_number)
+            ->assertSee('Shipped')
+            ->assertSee('Snapshot Punjabi Suit')
+            ->assertSee('BEN-TRACK-01')
+            ->assertSee('Burgundy')
+            ->assertSee('Cash on Delivery')
+            ->assertSee('Lahore')
+            ->assertSee('Punjab')
+            ->assertSee('Pakistan')
+            ->assertSee('Status')
+            ->assertSee('history')
+            ->assertDontSee('Private Recipient')
+            ->assertDontSee('private-recipient@example.com')
+            ->assertDontSee('+923001112233')
+            ->assertDontSee('Secret Street 42')
+            ->assertDontSee('Private Apartment')
+            ->assertDontSee('54000');
+    }
+
+    public function test_invalid_or_unauthorized_tracking_codes_use_a_generic_failure(): void
+    {
+        $guestOrder = $this->makeOrder();
+        $guestToken = (string) Str::uuid();
+        $guestOrder->update(['checkout_token' => $guestToken]);
+
+        $registeredCustomer = User::create([
+            'name' => 'Registered Customer',
+            'email' => 'registered-tracking@example.com',
+            'password' => 'password',
+        ]);
+        $registeredOrder = $this->makeOrder();
+        $registeredToken = (string) Str::uuid();
+        $registeredOrder->update([
+            'checkout_token' => $registeredToken,
+            'user_id' => $registeredCustomer->id,
+        ]);
+
+        $this->get('/order-tracking/' . $guestOrder->id)->assertNotFound();
+
+        $this->from(route('store.orders.track'))
+            ->post(route('store.orders.track.submit'), [
+                'tracking_token' => (string) Str::uuid(),
+            ])
+            ->assertRedirect(route('store.orders.track'))
+            ->assertSessionHasErrors('tracking_token');
+
+        $this->get(route('store.orders.track'))
+            ->assertOk()
+            ->assertSee('We could not verify those tracking details.')
+            ->assertDontSee($guestOrder->order_number)
+            ->assertDontSee($registeredOrder->order_number);
+
+        $this->from(route('store.orders.track'))
+            ->actingAs($registeredCustomer, 'web')
+            ->post(route('store.orders.track.submit'), [
+                'tracking_token' => $guestToken,
+            ])
+            ->assertRedirect(route('store.orders.track'))
+            ->assertSessionHasErrors('tracking_token');
+
+        $this->get(route('store.orders.track'))
+            ->assertOk()
+            ->assertSee('We could not verify those tracking details.')
+            ->assertDontSee($guestOrder->order_number)
+            ->assertDontSee($registeredOrder->order_number);
     }
 
     public function test_registered_order_confirmation_is_only_visible_to_its_owner(): void
@@ -390,10 +580,35 @@ class OrderCheckoutTest extends TestCase
         $this->assertDatabaseCount('orders', 0);
     }
 
+    public function test_checkout_rejects_product_that_becomes_unavailable_without_pruning_cart(): void
+    {
+        $variant = $this->makeVariant();
+        $checkoutToken = $this->startCheckout($variant, 1);
+        $variant->product->update(['is_active' => false]);
+
+        $this->post(route('store.checkout.place'), $this->checkoutData([
+            'checkout_token' => $checkoutToken,
+        ]))->assertSessionHasErrors('cart');
+
+        $this->assertSame([$variant->id => 1], session('cart'));
+        $this->assertDatabaseCount('orders', 0);
+    }
+
     public function test_empty_cart_cannot_open_checkout(): void
     {
         $this->get(route('store.checkout.index'))
             ->assertRedirect(route('store.cart.index'));
+
+        $variant = $this->makeVariant();
+        $checkoutToken = $this->startCheckout($variant, 1);
+
+        $this->withSession(['cart' => []])
+            ->post(route('store.checkout.place'), $this->checkoutData([
+                'checkout_token' => $checkoutToken,
+            ]))
+            ->assertRedirect(route('store.cart.index'));
+
+        $this->assertDatabaseCount('orders', 0);
     }
 
     public function test_invalid_customer_and_address_input_keeps_cart_and_old_values(): void
@@ -449,6 +664,62 @@ class OrderCheckoutTest extends TestCase
         $this->assertDatabaseCount('orders', 1);
         $this->assertDatabaseCount('order_items', 1);
         $this->assertSame([$variant->id => 3], session('cart'));
+
+        $order = Order::query()->firstOrFail();
+        $this->get(route('store.orders.show', $order->checkout_token))
+            ->assertOk()
+            ->assertSee($order->order_number);
+        $this->assertDatabaseCount('orders', 1);
+    }
+
+    public function test_all_order_items_keep_checkout_price_snapshots_after_catalogue_price_changes(): void
+    {
+        $firstVariant = $this->makeVariant([
+            'price' => '100.00',
+            'sku' => 'BEN-SNAPSHOT-01',
+            'stock_quantity' => 5,
+        ]);
+        $secondVariant = ProductVariant::create([
+            'product_id' => $firstVariant->product_id,
+            'sku' => 'BEN-SNAPSHOT-02',
+            'size' => 'L',
+            'color' => 'Ivory',
+            'price' => '200.00',
+            'stock_quantity' => 5,
+            'is_active' => true,
+        ]);
+
+        $this->withSession(['cart' => [
+            $firstVariant->id => 1,
+            $secondVariant->id => 2,
+        ]]);
+        $checkoutResponse = $this->get(route('store.checkout.index'));
+        $checkoutResponse->assertOk();
+        preg_match('/name="checkout_token" value="([^"]+)"/', $checkoutResponse->getContent(), $matches);
+        $this->assertNotEmpty($matches[1] ?? null);
+
+        $this->post(route('store.checkout.place'), $this->checkoutData([
+            'checkout_token' => $matches[1],
+        ]))->assertRedirect();
+
+        $order = Order::query()->with('items')->firstOrFail();
+        $this->assertDatabaseCount('orders', 1);
+        $this->assertDatabaseCount('order_items', 2);
+        $this->assertSame('500.00', $order->subtotal);
+        $this->assertSame(500.0 + (float) $order->shipping_total, (float) $order->grand_total);
+
+        $firstVariant->update(['price' => '9999.00']);
+        $secondVariant->update(['price' => '8888.00']);
+
+        $this->assertSame('100.00', $order->items->firstWhere('sku', 'BEN-SNAPSHOT-01')->unit_price);
+        $this->assertSame('200.00', $order->items->firstWhere('sku', 'BEN-SNAPSHOT-02')->unit_price);
+        $this->assertSame('400.00', $order->items->firstWhere('sku', 'BEN-SNAPSHOT-02')->line_total);
+
+        $this->get(route('store.orders.show', $order->checkout_token))
+            ->assertOk()
+            ->assertSee('500.00')
+            ->assertSee('100.00')
+            ->assertSee('400.00');
     }
 
     public function test_database_failure_does_not_report_success_or_clear_cart(): void
@@ -496,8 +767,10 @@ class OrderCheckoutTest extends TestCase
 
     public function test_confirmation_deducts_stock_and_cancellation_restores_it(): void
     {
+        Mail::fake();
         $variant = $this->makeVariant(['stock_quantity' => 5]);
         $order = $this->makeOrder();
+        $order->update(['customer_email' => 'simran@example.com']);
         $order->items()->create([
             'product_id' => $variant->product_id,
             'product_variant_id' => $variant->id,
@@ -549,6 +822,17 @@ class OrderCheckoutTest extends TestCase
 
         $this->assertSame(5, $variant->fresh()->stock_quantity);
         $this->assertDatabaseCount('order_status_histories', 2);
+        Mail::assertQueued(OrderNotificationMail::class, 2);
+        Mail::assertQueued(
+            OrderNotificationMail::class,
+            fn(OrderNotificationMail $mail) =>
+            $mail->notificationType === 'confirmed'
+        );
+        Mail::assertQueued(
+            OrderNotificationMail::class,
+            fn(OrderNotificationMail $mail) =>
+            $mail->notificationType === 'cancelled'
+        );
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
             'status' => Order::STATUS_CANCELLED,
@@ -557,8 +841,10 @@ class OrderCheckoutTest extends TestCase
 
     public function test_shipping_does_not_mark_order_delivered_automatically(): void
     {
+        Mail::fake();
         $variant = $this->makeVariant(['stock_quantity' => 5]);
         $order = $this->makeOrder();
+        $order->update(['customer_email' => 'simran@example.com']);
         $order->items()->create([
             'product_id' => $variant->product_id,
             'product_variant_id' => $variant->id,
@@ -596,6 +882,14 @@ class OrderCheckoutTest extends TestCase
 
         $this->assertSame(Order::STATUS_DELIVERED, $order->fresh()->status);
         $this->assertNotNull($order->fresh()->delivered_at);
+        Mail::assertQueued(OrderNotificationMail::class, 3);
+        foreach ([Order::STATUS_CONFIRMED, Order::STATUS_SHIPPED, Order::STATUS_DELIVERED] as $notificationType) {
+            Mail::assertQueued(
+                OrderNotificationMail::class,
+                fn(OrderNotificationMail $mail) =>
+                $mail->notificationType === $notificationType
+            );
+        }
     }
 
     public function test_confirmation_rejects_insufficient_stock_without_deducting_it(): void

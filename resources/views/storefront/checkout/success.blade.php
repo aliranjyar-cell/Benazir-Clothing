@@ -37,6 +37,26 @@
                                 Placed {{ $order->created_at->format('F j, Y · g:i A') }}
                             </time>
                         </div>
+                        @if ($confirmation && $order->user_id === null)
+                            <section
+                                class="mt-space-md rounded-lg border border-outline-variant bg-surface-variant/30 p-space-md"
+                                aria-label="Private order tracking code">
+                                <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">Private
+                                    tracking code</p>
+                                <code
+                                    class="mt-space-xs block break-all font-mono text-body-sm text-primary">{{ $order->checkout_token }}</code>
+                                <p class="mt-space-xs font-body-sm text-body-sm text-on-surface-variant">
+                                    Save this code privately. Email and SMS verification are not configured, so no message
+                                    will be sent.
+                                </p>
+                                <a href="{{ route('store.orders.track') }}"
+                                    class="mt-space-sm inline-flex items-center gap-space-xs font-label-uppercase text-label-uppercase tracking-widest text-secondary underline underline-offset-4 hover:text-primary">
+                                    Track this order
+                                    <span class="material-symbols-outlined text-base"
+                                        aria-hidden="true">arrow_forward</span>
+                                </a>
+                            </section>
+                        @endif
                     </div>
                     <span
                         class="inline-flex items-center rounded-full px-3 py-1 text-[0.6rem] font-label-uppercase tracking-widest {{ $order->status === 'delivered' ? 'bg-green-container text-on-green-container' : ($order->status === 'cancelled' ? 'bg-error-container text-on-error-container' : 'bg-secondary-container text-on-secondary-container') }}">

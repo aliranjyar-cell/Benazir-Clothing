@@ -23,24 +23,10 @@
                         Customer
                         Atelier Care</h3>
                     <ul class="space-y-space-sm font-body-sm text-body-sm text-on-surface-variant">
-                        <li><a class="hover:text-primary transition-colors" data-path="size-guide" href="#">Size
-                                &amp; Custom Fit
-                                Guide</a></li>
-                        <li><a class="hover:text-primary transition-colors" data-path="shipping"
-                                href="#">Worldwide Express
-                                Shipping</a></li>
-                        <li><a class="hover:text-primary transition-colors" data-path="bridal-consultation"
-                                href="#">Custom Bridal
-                                Inquiries</a></li>
-                        <li><a class="hover:text-primary transition-colors" data-path="returns" href="#">Returns
-                                &amp; Exchanges</a>
-                        </li>
-                        <li><a class="hover:text-primary transition-colors" data-path="track-order" href="#">Track
-                                Order Status</a>
-                        </li>
-                        <li><a class="hover:text-primary transition-colors" data-path="fabric-care" href="#">Raw
-                                Silk &amp; Velvet
-                                Care</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{{ route('store.contact') }}">Contact
+                                the Atelier</a></li>
+                        <li><a class="hover:text-primary transition-colors"
+                                href="{{ route('store.orders.track') }}">Track Order Status</a></li>
                     </ul>
                 </div>
                 <div class="space-y-space-md">
@@ -63,22 +49,6 @@
                         <li><a class="hover:text-primary transition-colors" data-path="new-arrivals"
                                 href="{{ route('store.shop') }}">New
                                 Arrivals</a></li>
-                    </ul>
-                    <li><a class="hover:text-primary transition-colors" data-path="festive-wear" href="#">Raw Silk
-                            Ghararas
-                            &amp; Shararas</a></li>
-                    <li><a class="hover:text-primary transition-colors" data-path="dupattas"
-                            href="#">Hand-embroidered Organza
-                            Dupattas</a></li>
-                    <li><a class="hover:text-primary transition-colors" data-path="festive-wear" href="#">Royal
-                            Velvet Festive
-                            Edit</a></li>
-                    <li><a class="hover:text-primary transition-colors" data-path="new-arrivals" href="#">Lawn
-                            &amp; Chiffon
-                            Luxury Pret</a></li>
-                    <li><a class="hover:text-primary transition-colors" data-path="embroidered-collection"
-                            href="#">Heritage
-                            Tilla &amp; Resham Work</a></li>
                     </ul>
                 </div>
                 <div class="space-y-space-md">

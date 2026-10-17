@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ class InventoryMovement extends Model
 
     protected $fillable = [
         'product_variant_id',
-        'user_id',
+        'admin_id',
         'type',
         'quantity_change',
         'reference',

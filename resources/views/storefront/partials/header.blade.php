@@ -92,10 +92,17 @@
                     data-path="home" href="{{ route('store.home') }}">Home</a><a
                     class="font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"
                     data-path="new-arrivals" href="{{ route('store.shop') }}">New Arrivals</a>
-                <a class="font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"
+                <a class="{{ request()->routeIs('store.shop') ? 'text-secondary font-semibold border-b-2 border-secondary' : 'font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1' }} font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"
                     href="{{ route('store.shop') }}">Products</a>
+                <a class="{{ request()->routeIs('store.about') ? 'text-secondary font-semibold border-b-2 border-secondary' : 'font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1' }} font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"
+                    href="{{ route('store.about') }}">About</a>
+                <a class="{{ request()->routeIs('store.contact') ? 'text-secondary font-semibold border-b-2 border-secondary' : 'font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1' }} font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"
+                    href="{{ route('store.contact') }}">Contact</a>
+                <a @if (request()->routeIs('store.orders.track*')) aria-current="page" @endif
+                    class="{{ request()->routeIs('store.orders.track') ? 'text-secondary font-semibold border-b-2 border-secondary' : 'font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1' }} font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"
+                    href="{{ route('store.orders.track') }}">Track Order</a>
                 @forelse ($navCategories ?? collect() as $navCategory)
-                    <a class="font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"
+                    <a class=" font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"
                         href="{{ route('store.shop', ['category' => $navCategory->slug]) }}">{{ $navCategory->name }}</a>
                 @empty
                     <a class="font-label-uppercase text-label-uppercase tracking-widest uppercase text-on-surface-variant hover:text-secondary hover:text-on-surface transition-colors pb-1"

@@ -14,13 +14,13 @@
             <div class="absolute inset-0 opacity-[0.035] pointer-events-none"
                 style="background-image: radial-gradient(#745a27 1px, transparent 1px); background-size: 28px 28px;">
             </div>
-            <div class="relative max-w-[1440px] mx-auto px-margin-mobile lg:px-margin py-space-xl lg:py-space-3xl">
+            <div class="relative max-w-[1440px] mx-auto px-margin-mobile lg:px-margin py-space-lg lg:py-space-2xl">
                 <!-- Main Asymmetric Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl lg:gap-gutter items-center">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg lg:gap-gutter items-center">
                     <!-- Left Editorial Story Column (7 Cols on Large Screen) -->
                     <div class="lg:col-span-7 flex flex-col z-10">
                         <!-- Atelier Metadata Bar / Overline -->
-                        <div class="flex flex-wrap items-center gap-space-sm mb-space-md">
+                        <div class="flex flex-wrap items-center gap-space-sm mb-space-sm">
                             <span
                                 class="inline-flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-high text-tertiary font-label-sm text-label-sm tracking-widest uppercase shadow-sm">
                                 <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
@@ -33,29 +33,26 @@
                             </span>
                         </div>
                         <!-- Headline in Majestic Playfair Display Serif -->
-                        <div class="space-y-space-xs mb-space-lg">
+                        <div class="space-y-space-xs mb-space-md">
                             <p class="font-headline-sm text-headline-sm text-secondary uppercase tracking-widest">
                                 Noor • Patiala • Lahore • Amritsar
                             </p>
                             <h1
-                                class=" text-[3rem] text-display-lg-mobile lg:text-display-lg text-primary tracking-tight leading-[1.08]">
-                                The Poetry of <br class="hidden sm:inline" />
+                                class="font-display-hero text-[3rem] sm:text-[3.5rem] lg:text-[3.75rem] text-primary tracking-tight leading-[1.08]">
+                                The Art of <br class="hidden sm:inline" />
                                 <span class="italic font-normal">Punjabi Craftsmanship</span> <br />
-                                &amp; Timeless Grace
+                                &amp; Timeless Elegance
                             </h1>
                         </div>
                         <!-- Editorial Narrative Subtext -->
-                        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-space-xl leading-relaxed">
-                            Immerse yourself in centuries of royal courtyard splendour, reimagined for the
-                            discerning bride.
-                            Floor-sweeping silken kurtas, hand-stitched Resham phulkari, and intricate antique Tilla
-                            and Zardozi
-                            woven into pure Chanderi tissue.
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mb-space-lg leading-relaxed">
+                            Heritage Punjabi couture, hand-finished in silk and adorned with Resham, Tilla, and Zardozi
+                            for today's celebrations.
                         </p>
                         <!-- Interactive CTAs -->
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-md mb-space-2xl">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-sm mb-space-xl">
                             <!-- Primary Gold-Accented Wine CTA -->
-                            <a class="group relative inline-flex items-center justify-center gap-space-sm px-space-xl py-space-md bg-primary hover:bg-primary-container text-on-primary rounded font-label-lg text-label-lg uppercase tracking-widest shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
+                            <a class="group relative inline-flex items-center justify-center gap-space-sm px-space-lg py-space-sm bg-primary hover:bg-primary-container text-on-primary rounded font-label-lg text-label-lg uppercase tracking-widest shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
                                 href="{{ route('store.shop') }}">
                                 <span>Explore The Royal Collection</span>
                                 <span
@@ -63,15 +60,15 @@
                                 <div class="absolute inset-x-0 bottom-0 h-0.5 bg-secondary-fixed opacity-70"></div>
                             </a>
                             <!-- Secondary Couture Concierge Link -->
-                            <a class="group inline-flex items-center justify-center gap-space-sm px-space-lg py-space-md bg-surface-container-lowest hover:bg-surface-container-low text-primary rounded font-label-lg text-label-lg uppercase tracking-wider shadow-sm transition-all duration-300 hover:shadow-md"
+                            <a class="group inline-flex items-center justify-center gap-space-sm px-space-lg py-space-sm bg-surface-container-lowest hover:bg-surface-container-low text-primary rounded font-label-lg text-label-lg uppercase tracking-wider shadow-sm transition-all duration-300 hover:shadow-md"
                                 href="{{ route('store.contact') }}">
                                 <span class="material-symbols-outlined text-secondary text-[20px]">calendar_month</span>
                                 <span>Private Bespoke Consultation</span>
                             </a>
                         </div>
                         <!-- Trust & Authenticity Pedigree Strip -->
-                        <div class="pt-space-lg bg-surface-container-low/60 rounded-xl px-space-lg py-space-md shadow-sm">
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+                        <div class="pt-space-md bg-surface-container-low/60 rounded-xl px-space-md py-space-sm shadow-sm">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
                                 <!-- Metric 1 -->
                                 <div class="flex items-center gap-space-sm">
                                     <div
@@ -120,10 +117,10 @@
                     <!-- Right Grand Architectural Visual Canvas (5 Cols on Large Screen) -->
                     <div class="lg:col-span-5 relative flex justify-center lg:justify-end">
                         <!-- Outer Architectural Arch Backdrop Ornament -->
-                        <div class="relative w-full max-w-[480px]">
+                        <div class="relative w-full max-w-[420px]">
                             <!-- Layered Haveli Jharokha Silhouette Frame -->
                             <div
-                                class="relative bg-surface-container-high p-space-sm sm:p-space-md rounded-t-[14rem] rounded-b-2xl shadow-xl transition-all duration-500">
+                                class="relative bg-surface-container-high p-space-xs sm:p-space-sm rounded-t-[14rem] rounded-b-2xl shadow-xl transition-all duration-500">
                                 <!-- Subtle Inner Inset Arch Border -->
                                 <div
                                     class="relative overflow-hidden rounded-t-[13.5rem] rounded-b-xl bg-surface-container-lowest aspect-[3/4] shadow-inner group">
@@ -229,252 +226,68 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg">
                     @forelse ($products as $product)
-                        @include('storefront.partials.product-card', ['product' => $product])
+                        @include('storefront.partials.product-card', [
+                            'product' => $product,
+                            'showDescription' => false,
+                            'showSizes' => false,
+                            'cardRadius' => 'rounded-md',
+                            'compact' => true,
+                        ])
                     @empty
                         <p class="col-span-full py-space-xl text-center text-on-surface-variant">No products are
                             available right now.</p>
                     @endforelse
-                    {{--
-                        <!-- Product 1 -->
-                        <div
-                            class="group bg-surface rounded-2xl p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300">
-                            <div>
-                                <div
-                                    class="relative w-full aspect-[3/4] overflow-hidden rounded-xl bg-surface-container mb-space-md">
-                                    <img alt="Gulnar Maroon Velvet Zari Suit"
-                                        class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8SGT1xT2eZ65quJxNUqyXVD-l-Pef_pTvHXdx7Gt2kywrb59MJk_xcZOM_Fq-RMdHyHpsRl_FetrOZRzGvYDMqnpUvbq2ElcQPxXtLvsHgX8sMlnrm_c1jmMPU2rXF563e3yKs5sdxkAkDIuBhuq14epDHYh54KkLa9cm5sxiffMphbKyXURNsy1ltQIG7vt1JdtOjx44wdiLR-AJrhTYHtesjXIfaqgoXySJ3c9doZ-ppkP3EuBQgA" />
-                                    <button aria-label="Add to Wishlist"
-                                        class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm text-primary hover:text-primary-container flex items-center justify-center transition-colors"
-                                        type="button">
-                                        <span class="material-symbols-outlined text-base">favorite</span>
-                                    </button>
-                                    <div class="absolute bottom-3 left-3 flex flex-wrap gap-1">
-                                        <span
-                                            class="px-2 py-0.5 bg-primary-container text-on-primary font-label-uppercase text-[0.6rem] tracking-wider uppercase rounded">Hand-Embroidered</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-1">
-                                    <p
-                                        class="font-label-uppercase text-[0.625rem] text-secondary tracking-widest uppercase">
-                                        Pure Velvet •
-                                        Zardozi</p>
-                                    <h3
-                                        class="font-headline-sm text-headline-sm text-primary font-serif group-hover:text-secondary transition-colors">
-                                        Gulnar Maroon Velvet Zari Suit</h3>
-                                    <p class="font-label-price text-label-price text-on-surface">$385 <span
-                                            class="text-xs text-on-surface-variant font-normal">USD</span></p>
-                                </div>
-                            </div>
-                            <div class="mt-space-md pt-space-xs">
-                                <div
-                                    class="flex items-center justify-between text-[0.6875rem] font-label-uppercase text-on-surface-variant mb-2">
-                                    <span>Select Size</span>
-                                    <span class="text-secondary cursor-pointer hover:underline">Custom Stitching
-                                        Available</span>
-                                </div>
-                                <div class="grid grid-cols-5 gap-1 mb-3">
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">XS</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors font-semibold"
-                                        type="button">S</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">M</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">L</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">XL</button>
-                                </div>
-                                <button
-                                    class="w-full py-2.5 bg-primary-container hover:bg-primary text-on-primary font-label-uppercase text-label-uppercase tracking-widest uppercase rounded-lg transition-colors flex items-center justify-center gap-1.5"
-                                    type="button">
-                                    <span class="material-symbols-outlined text-sm">shopping_bag</span>
-                                    <span>Add to Bag</span>
-                                </button>
-                            </div>
+
+                </div>
+            </div>
+        </section>
+        <section class="w-full overflow-hidden bg-primary text-on-primary" aria-labelledby="punjabi-wardrobe-title">
+            <div class="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2">
+                <div class="relative min-h-[18rem] sm:min-h-[24rem] lg:min-h-[34rem]">
+                    <img src="{{ asset('images/pexels-dhanno-27284115.jpg') }}"
+                        alt="Punjabi woman wearing a traditional embroidered suit"
+                        class="absolute inset-0 h-full w-full object-cover object-right" loading="lazy" decoding="async">
+                    <span
+                        class="absolute bottom-5 left-5 font-label-uppercase text-[0.65rem] uppercase tracking-widest text-white drop-shadow sm:bottom-7 sm:left-7">
+                        Punjabi craft, worn with pride
+                    </span>
+                </div>
+                <div
+                    class="flex flex-col justify-center px-margin-mobile py-space-2xl sm:px-space-xl lg:px-space-2xl lg:py-space-3xl">
+                    <p class="font-label-uppercase text-label-uppercase tracking-[0.2em] text-secondary-fixed">
+                        The Punjabi wardrobe
+                    </p>
+                    <h2 id="punjabi-wardrobe-title"
+                        class="mt-space-sm font-display-hero text-3xl leading-tight text-on-primary sm:text-4xl">
+                        Tradition, tailored for today.
+                    </h2>
+                    <p class="mt-space-md max-w-xl font-body-md text-body-md leading-relaxed text-on-primary/80">
+                        From graceful shalwar kameez to embroidered dupattas, Punjabi clothing brings together ease,
+                        color, and hand-finished detail for everyday moments and celebrations.
+                    </p>
+                    <div
+                        class="mt-space-xl grid grid-cols-3 divide-x divide-white/20 border-y border-white/20 py-space-md">
+                        <div class="pr-2 sm:pr-4">
+                            <p class="font-label-uppercase text-[0.6rem] uppercase tracking-widest text-secondary-fixed">
+                                Silhouette</p>
+                            <p class="mt-1 text-sm text-on-primary">Shalwar kameez</p>
                         </div>
-                        <!-- Product 2 -->
-                        <div
-                            class="group bg-surface rounded-2xl p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300">
-                            <div>
-                                <div
-                                    class="relative w-full aspect-[3/4] overflow-hidden rounded-xl bg-surface-container mb-space-md">
-                                    <img alt="Nafisa Sage &amp; Ivory Resham Kameez"
-                                        class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqDBlFDlbkRfdcKFivUaa1GpGnmrSotvgchglzBiS7-zpxzdCvmHs-23QpAtcuggyHahgS5oWFrdA4ffW3B0PBw1jAyxDnp5DhTt_QDGzISa0PFNDBTHS62ZGpgvAg3aT7fmaXnqZDIskW4kW92I07vkLk-eT2_Im6_1sN2IUP0r2IhdArTJl-IKzWjjy5ldg9nBulNDvhkmSegYM-ot-k5pEe0GSu0palWDu23MqqhYiLUY9ggyzgag" />
-                                    <button aria-label="Add to Wishlist"
-                                        class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm text-primary hover:text-primary-container flex items-center justify-center transition-colors"
-                                        type="button">
-                                        <span class="material-symbols-outlined text-base">favorite</span>
-                                    </button>
-                                    <div class="absolute bottom-3 left-3 flex flex-wrap gap-1">
-                                        <span
-                                            class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container font-label-uppercase text-[0.6rem] tracking-wider uppercase rounded">Pure
-                                            Raw Silk</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-1">
-                                    <p
-                                        class="font-label-uppercase text-[0.625rem] text-secondary tracking-widest uppercase">
-                                        Resham •
-                                        Organza Dupatta</p>
-                                    <h3
-                                        class="font-headline-sm text-headline-sm text-primary font-serif group-hover:text-secondary transition-colors">
-                                        Nafisa Sage &amp; Ivory Resham Kameez</h3>
-                                    <p class="font-label-price text-label-price text-on-surface">$320 <span
-                                            class="text-xs text-on-surface-variant font-normal">USD</span></p>
-                                </div>
-                            </div>
-                            <div class="mt-space-md pt-space-xs">
-                                <div
-                                    class="flex items-center justify-between text-[0.6875rem] font-label-uppercase text-on-surface-variant mb-2">
-                                    <span>Select Size</span>
-                                    <span class="text-secondary cursor-pointer hover:underline">Size Chart</span>
-                                </div>
-                                <div class="grid grid-cols-5 gap-1 mb-3">
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">XS</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">S</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors font-semibold"
-                                        type="button">M</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">L</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">XL</button>
-                                </div>
-                                <button
-                                    class="w-full py-2.5 bg-primary-container hover:bg-primary text-on-primary font-label-uppercase text-label-uppercase tracking-widest uppercase rounded-lg transition-colors flex items-center justify-center gap-1.5"
-                                    type="button">
-                                    <span class="material-symbols-outlined text-sm">shopping_bag</span>
-                                    <span>Add to Bag</span>
-                                </button>
-                            </div>
+                        <div class="px-2 sm:px-4">
+                            <p class="font-label-uppercase text-[0.6rem] uppercase tracking-widest text-secondary-fixed">
+                                Handwork</p>
+                            <p class="mt-1 text-sm text-on-primary">Phulkari &amp; resham</p>
                         </div>
-                        <!-- Product 3 -->
-                        <div
-                            class="group bg-surface rounded-2xl p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300">
-                            <div>
-                                <div
-                                    class="relative w-full aspect-[3/4] overflow-hidden rounded-xl bg-surface-container mb-space-md">
-                                    <img alt="Zeenat Mustard Gold Patiala Ensemble"
-                                        class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPKuumEHiv0YRjZ-7UfeWXDDtLVotp0QGG--3PQMUYo0ELApVYWsAXVU7zyvhCUnETM7rqQgoXqUZjxIggFf0oMY426pPPUk5Y8-2clu6JrdkT-TBQfJ6eXKbKHkd3vQ6LRmpUZF8YAU1MslcvMaUgoBmbleVccXpNn3rvsGYylnm7YxbjHEdW3Pu1dmrpOIkh-KOJKADOiaObIx-w1KhIRRZCAICQuCop4hVz3PQ38C2eP41hu14NkQ" />
-                                    <button aria-label="Add to Wishlist"
-                                        class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm text-primary hover:text-primary-container flex items-center justify-center transition-colors"
-                                        type="button">
-                                        <span class="material-symbols-outlined text-base">favorite</span>
-                                    </button>
-                                    <div class="absolute bottom-3 left-3 flex flex-wrap gap-1">
-                                        <span
-                                            class="px-2 py-0.5 bg-secondary text-on-secondary font-label-uppercase text-[0.6rem] tracking-wider uppercase rounded">Limited
-                                            Edition</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-1">
-                                    <p
-                                        class="font-label-uppercase text-[0.625rem] text-secondary tracking-widest uppercase">
-                                        Antique Tilla
-                                        • Gota</p>
-                                    <h3
-                                        class="font-headline-sm text-headline-sm text-primary font-serif group-hover:text-secondary transition-colors">
-                                        Zeenat Mustard Gold Patiala</h3>
-                                    <p class="font-label-price text-label-price text-on-surface">$440 <span
-                                            class="text-xs text-on-surface-variant font-normal">USD</span></p>
-                                </div>
-                            </div>
-                            <div class="mt-space-md pt-space-xs">
-                                <div
-                                    class="flex items-center justify-between text-[0.6875rem] font-label-uppercase text-on-surface-variant mb-2">
-                                    <span>Select Size</span>
-                                    <span class="text-secondary cursor-pointer hover:underline">Made to Measure</span>
-                                </div>
-                                <div class="grid grid-cols-5 gap-1 mb-3">
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">XS</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors font-semibold"
-                                        type="button">S</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">M</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">L</button>
-                                    <button
-                                        class="py-1 text-center font-label-uppercase text-xs rounded bg-surface-container hover:bg-secondary-container transition-colors"
-                                        type="button">XL</button>
-                                </div>
-                                <button
-                                    class="w-full py-2.5 bg-primary-container hover:bg-primary text-on-primary font-label-uppercase text-label-uppercase tracking-widest uppercase rounded-lg transition-colors flex items-center justify-center gap-1.5"
-                                    type="button">
-                                    <span class="material-symbols-outlined text-sm">shopping_bag</span>
-                                    <span>Add to Bag</span>
-                                </button>
-                            </div>
+                        <div class="pl-2 sm:pl-4">
+                            <p class="font-label-uppercase text-[0.6rem] uppercase tracking-widest text-secondary-fixed">
+                                For</p>
+                            <p class="mt-1 text-sm text-on-primary">Every occasion</p>
                         </div>
-                        <!-- Product 4 -->
-                        <div
-                            class="group bg-surface rounded-2xl p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300">
-                            <div>
-                                <div
-                                    class="relative w-full aspect-[3/4] overflow-hidden rounded-xl bg-surface-container mb-space-md">
-                                    <img alt="Mehtab Scalloped Banarasi Dupatta"
-                                        class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ9BrzAAbuBRRaT2aofMmGdAeBifsp0Zco9scQxQthMDGDkFyP0vuJysSRet9zlJt8iVAQdsvXvREoiSHor5Y9ijbG4nNo552gYFd289UNZ5bM04hmBSRj31d3nvo4JrWojMs7qULhWiFNKethivTx10hmI3knq4ElQ8dUiVKrsPoOtahPiLSTYyffrTE1jTQquU9hv6x7jnXLWSHfxU3zYUkpsrViW-ojQlA58y-9a3miSLU1Ku9tjQ" />
-                                    <button aria-label="Add to Wishlist"
-                                        class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm text-primary hover:text-primary-container flex items-center justify-center transition-colors"
-                                        type="button">
-                                        <span class="material-symbols-outlined text-base">favorite</span>
-                                    </button>
-                                    <div class="absolute bottom-3 left-3 flex flex-wrap gap-1">
-                                        <span
-                                            class="px-2 py-0.5 bg-secondary-container text-on-secondary-container font-label-uppercase text-[0.6rem] tracking-wider uppercase rounded">Pret
-                                            Gold</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-1">
-                                    <p
-                                        class="font-label-uppercase text-[0.625rem] text-secondary tracking-widest uppercase">
-                                        Pure Banarasi
-                                        • 2.75m Drape</p>
-                                    <h3
-                                        class="font-headline-sm text-headline-sm text-primary font-serif group-hover:text-secondary transition-colors">
-                                        Mehtab Scalloped Banarasi Dupatta</h3>
-                                    <p class="font-label-price text-label-price text-on-surface">$195 <span
-                                            class="text-xs text-on-surface-variant font-normal">USD</span></p>
-                                </div>
-                            </div>
-                            <div class="mt-space-md pt-space-xs">
-                                <div
-                                    class="flex items-center justify-between text-[0.6875rem] font-label-uppercase text-on-surface-variant mb-2">
-                                    <span>Standard Length</span>
-                                    <span class="text-secondary font-semibold">2.75 Metres</span>
-                                </div>
-                                <div
-                                    class="p-2 mb-3 bg-surface-container rounded text-center text-xs text-on-surface-variant font-body-sm">
-                                    Includes matching hand-tasseled silk corners
-                                </div>
-                                <button
-                                    class="w-full py-2.5 bg-primary-container hover:bg-primary text-on-primary font-label-uppercase text-label-uppercase tracking-widest uppercase rounded-lg transition-colors flex items-center justify-center gap-1.5"
-                                    type="button">
-                                    <span class="material-symbols-outlined text-sm">shopping_bag</span>
-                                    <span>Add to Bag</span>
-                                </button>
-                            </div>
-                        </div>
-                        --}}
+                    </div>
+                    <a href="{{ route('store.shop') }}"
+                        class="mt-space-xl inline-flex w-fit items-center gap-2 border-b border-secondary-fixed pb-1 font-label-uppercase text-label-uppercase uppercase tracking-widest text-on-primary transition-colors hover:text-secondary-fixed">
+                        Explore Punjabi styles
+                        <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -486,7 +299,7 @@
                     <div class="lg:col-span-7 relative">
                         <div class="aspect-[4/5] rounded-3xl overflow-hidden shadow-xl bg-surface-container relative">
                             <img alt="Artisan Punjab Couture" class="w-full h-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8SGT1xT2eZ65quJxNUqyXVD-l-Pef_pTvHXdx7Gt2kywrb59MJk_xcZOM_Fq-RMdHyHpsRl_FetrOZRzGvYDMqnpUvbq2ElcQPxXtLvsHgX8sMlnrm_c1jmMPU2rXF563e3yKs5sdxkAkDIuBhuq14epDHYh54KkLa9cm5sxiffMphbKyXURNsy1ltQIG7vt1JdtOjx44wdiLR-AJrhTYHtesjXIfaqgoXySJ3c9doZ-ppkP3EuBQgA" />
+                                src=" {{ asset('images/pexels-dhanno-28390566.webp') }}" />
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent flex flex-col justify-end p-space-lg md:p-space-xl">
                                 <span
@@ -792,7 +605,7 @@
                     <div class="group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs">
                         <img alt="Atelier moment 1"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8SGT1xT2eZ65quJxNUqyXVD-l-Pef_pTvHXdx7Gt2kywrb59MJk_xcZOM_Fq-RMdHyHpsRl_FetrOZRzGvYDMqnpUvbq2ElcQPxXtLvsHgX8sMlnrm_c1jmMPU2rXF563e3yKs5sdxkAkDIuBhuq14epDHYh54KkLa9cm5sxiffMphbKyXURNsy1ltQIG7vt1JdtOjx44wdiLR-AJrhTYHtesjXIfaqgoXySJ3c9doZ-ppkP3EuBQgA" />
+                            src=" {{ asset('images/footer/0FThkiJxfFOXFTO0osCnTzaZ6MagHJ9rJQEmn7qe2gxvkJkclCeDk8Ac8QBTdGe6dBQr3VAId_Ki3ePvnLRjrNrkuDjhZAo2cunT46wM-tRzr7m76yz5MPth7DE_F7uJNx2aO84hFMryGEc92eNGb3NdOpnB1myyeDFZ-z4G_2Xs8ip1xPAfeUK6-N93RfTK.webp')}} " />
                         <div
                             class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
                             <span class="material-symbols-outlined text-2xl">favorite</span>
@@ -801,7 +614,7 @@
                     <div class="group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs">
                         <img alt="Atelier moment 2"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqDBlFDlbkRfdcKFivUaa1GpGnmrSotvgchglzBiS7-zpxzdCvmHs-23QpAtcuggyHahgS5oWFrdA4ffW3B0PBw1jAyxDnp5DhTt_QDGzISa0PFNDBTHS62ZGpgvAg3aT7fmaXnqZDIskW4kW92I07vkLk-eT2_Im6_1sN2IUP0r2IhdArTJl-IKzWjjy5ldg9nBulNDvhkmSegYM-ot-k5pEe0GSu0palWDu23MqqhYiLUY9ggyzgag" />
+                            src=" {{ asset('images/footer/pexels-dhanno-28759961.webp') }}" />
                         <div
                             class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
                             <span class="material-symbols-outlined text-2xl">favorite</span>
@@ -810,7 +623,7 @@
                     <div class="group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs">
                         <img alt="Atelier moment 3"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPKuumEHiv0YRjZ-7UfeWXDDtLVotp0QGG--3PQMUYo0ELApVYWsAXVU7zyvhCUnETM7rqQgoXqUZjxIggFf0oMY426pPPUk5Y8-2clu6JrdkT-TBQfJ6eXKbKHkd3vQ6LRmpUZF8YAU1MslcvMaUgoBmbleVccXpNn3rvsGYylnm7YxbjHEdW3Pu1dmrpOIkh-KOJKADOiaObIx-w1KhIRRZCAICQuCop4hVz3PQ38C2eP41hu14NkQ" />
+                            src=" {{ asset('images/footer/pexels-dhanno-25184995.webp') }}" />
                         <div
                             class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
                             <span class="material-symbols-outlined text-2xl">favorite</span>
@@ -819,7 +632,7 @@
                     <div class="group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs">
                         <img alt="Atelier moment 4"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ9BrzAAbuBRRaT2aofMmGdAeBifsp0Zco9scQxQthMDGDkFyP0vuJysSRet9zlJt8iVAQdsvXvREoiSHor5Y9ijbG4nNo552gYFd289UNZ5bM04hmBSRj31d3nvo4JrWojMs7qULhWiFNKethivTx10hmI3knq4ElQ8dUiVKrsPoOtahPiLSTYyffrTE1jTQquU9hv6x7jnXLWSHfxU3zYUkpsrViW-ojQlA58y-9a3miSLU1Ku9tjQ" />
+                            src=" {{ asset('images/footer/pexels-dhanno-29460548.jpg') }}" />
                         <div
                             class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
                             <span class="material-symbols-outlined text-2xl">favorite</span>
@@ -870,7 +683,7 @@
                                 href="{{ route('store.contact') }}">Returns &amp; Exchanges</a>
                         </li>
                         <li><a class="hover:text-primary transition-colors" data-path="track-order"
-                                href="{{ route('store.contact') }}">Track Order Status</a>
+                                href="{{ route('store.orders.track') }}">Track Order Status</a>
                         </li>
                         <li><a class="hover:text-primary transition-colors" data-path="fabric-care"
                                 href="{{ route('store.about') }}">Raw Silk &amp; Velvet

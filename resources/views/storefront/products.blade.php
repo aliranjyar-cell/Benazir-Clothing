@@ -50,7 +50,7 @@
                     <div class="relative h-[240px] md:h-[320px] lg:h-[380px] w-full">
                         <img alt="BENAZIR Haute Couture Lookbook 2025"
                             class="w-full h-full object-cover object-center filter saturate-[0.9] hover:scale-[1.01] transition-transform duration-700"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiisLYy4SlQVxEiVFx0PwFrtWnCgFcGZdE9EbSNHEfdz13C_pWVrVLeeIO6sfhHLLWdrGTxUMGBLwBuLSDcEghH2rsQg_qpTtmZT4lfjUDeAW_lNsjPLRDnMs-1YddLtnvwsWZBQWZMu4NMwTIDKh6qbQoImVYUXLVUdBkFU64cQw1h4n-sH41LIXBmMfE54aYgnaFmsYivgTqYtauIGDJ-ChUaMr_fdw-tMOH9xab--QWUuM6oYda" />
+                            src="{{ asset('images/pexels-dhanno-27603274.webp') }}" />
                         <div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-on-surface/20 to-transparent">
                         </div>
                         <div
@@ -110,7 +110,7 @@
                     @endif
                 </div>
                 <!-- Sorting & Mobile Filter Toggle Trigger -->
-                <div class="flex items-center justify-between md:justify-end gap-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 md:justify-end md:gap-4">
                     <!-- Results Counter -->
                     <span
                         class="text-body-sm font-body-sm text-on-surface-variant">{{ $products->total() ? $products->firstItem() . '–' . $products->lastItem() . ' of ' . $products->total() : 'No products found' }}
@@ -123,14 +123,14 @@
                     </a>
                     <!-- Sort Select -->
                     <form action="{{ route('store.shop') }}" method="GET"
-                        class="flex items-center gap-2 border border-outline-variant/60 bg-surface px-3 py-1.5">
+                        class="flex min-w-0 max-w-full items-center gap-2 border border-outline-variant/60 bg-surface px-2 py-1.5 sm:px-3">
                         @foreach (request()->except(['sort', 'page']) as $filterKey => $filterValue)
                             <input type="hidden" name="{{ $filterKey }}" value="{{ $filterValue }}">
                         @endforeach
                         <label for="product-sort"
                             class="text-label-sm font-label-sm uppercase tracking-wider text-outline">Sort By:</label>
                         <select id="product-sort" name="sort" onchange="this.form.submit()"
-                            class="bg-transparent text-label-sm font-label-sm uppercase text-on-surface font-medium">
+                            class="min-w-0 max-w-[48vw] bg-transparent text-label-sm font-label-sm uppercase text-on-surface font-medium sm:max-w-none">
                             <option value="latest" {{ $sort === 'latest' ? 'selected' : '' }}>New Arrivals</option>
                             <option value="name" {{ $sort === 'name' ? 'selected' : '' }}>Name A–Z</option>
                             <option value="price_asc" {{ $sort === 'price_asc' ? 'selected' : '' }}>Price: Low to High

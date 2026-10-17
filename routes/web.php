@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Http\Controllers\Storefront\HomeController;
 use App\Http\Controllers\Storefront\ShopController;
 use App\Http\Controllers\Storefront\CartController;
@@ -76,10 +77,15 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/inventory/{variant}/adjust', [InventoryController::class, 'adjust'])->name('admin.inventory.adjust');
     Route::post('/inventory/{variant}/adjust', [InventoryController::class, 'storeAdjustment'])->name('admin.inventory.adjust.store');
 
+    Route::resource('purchase-orders', PurchaseOrderController::class)
+        ->only(['index', 'create', 'store', 'show'])
+        ->names('admin.purchase-orders');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/purchase-orders/{purchaseOrder}/receive', [PurchaseOrderController::class, 'receive'])
+        ->name('admin.purchase-orders.receive');
+
+
+
 
 
 
@@ -124,7 +130,11 @@ Route::middleware('auth:admin')->group(function () {
     )->name('admin.orders.link-customer');
 });
 
-
+Route::middleware('auth:web')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 
 
@@ -149,6 +159,8 @@ Route::middleware('auth')->group(function () {
 */
 Route::view('/about', 'storefront.about')->name('store.about');
 Route::view('/contact', 'storefront.contact')->name('store.contact');
+Route::post('/contact', [\App\Http\Controllers\Storefront\ContactController::class, 'store'])
+    ->name('store.contact.submit');
 
 Route::get('/shop', [ShopController::class, 'index'])->name('store.shop');
 
@@ -177,6 +189,13 @@ Route::post('/cart/clear', [CartController::class, 'clear'])->name('store.cart.c
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('store.checkout.index');
 
 Route::post('/checkout/place', [CheckoutController::class, 'store'])->name('store.checkout.place');
+
+Route::get('/order-tracking', [StorefrontOrderController::class, 'trackingForm'])
+    ->name('store.orders.track');
+
+Route::post('/order-tracking', [StorefrontOrderController::class, 'track'])
+    ->middleware('throttle:10,1')
+    ->name('store.orders.track.submit');
 
 Route::middleware('guest:web')->group(function () {
     Route::get('/account/login', [CustomerAuthController::class, 'create'])->name('store.login');
