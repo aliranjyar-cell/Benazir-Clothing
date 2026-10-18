@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -197,6 +196,10 @@ Route::view('/about', 'storefront.about')->name('store.about');
 Route::view('/contact', 'storefront.contact')->name('store.contact');
 Route::post('/contact', [\App\Http\Controllers\Storefront\ContactController::class, 'store'])
     ->name('store.contact.submit');
+
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('store.newsletter.subscribe');
 
 Route::get('/shop', [ShopController::class, 'index'])->name('store.shop');
 

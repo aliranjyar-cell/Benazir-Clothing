@@ -59,14 +59,16 @@
                         {{ config('storefront.store_name', 'Benazir') }} Atelier Circle for
                         private
                         festive previews, bespoke trunk show invites, and curated heirloom releases.</p>
-                    <form class="space-y-space-xs">
+                    <form class="space-y-space-xs" action="{{ route('store.newsletter.subscribe') }}" method="POST">
+                    @csrf
                         <div
                             class="flex rounded-lg overflow-hidden ring-1 ring-secondary/50 focus-within:ring-primary transition-all">
+                            <label for="newsletter-email" class="sr-only">Email address</label>
                             <input
                                 class="w-full bg-surface-container-lowest px-3 py-2 text-on-surface font-body-sm text-body-sm outline-none placeholder:text-on-surface-variant/60"
-                                placeholder="Enter your email address" type="email" /><button
+                                id="newsletter-email" placeholder="Enter your email address" type="email" /><button
                                 class="bg-primary-container text-on-primary font-label-uppercase text-label-uppercase px-4 py-2 hover:bg-primary transition-colors tracking-widest uppercase"
-                                type="button">Subscribe</button>
+                                type="submit">Subscribe</button>
                         </div>
                         <p class="font-label-uppercase text-[0.625rem] text-on-surface-variant/80 tracking-wider">By
                             subscribing you
