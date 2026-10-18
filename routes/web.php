@@ -22,12 +22,13 @@ use App\Http\Controllers\Storefront\OrderController as StorefrontOrderController
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('store.home');
 
 Route::get('/dashboard', function () {
-    $lowStockThreshold = 5;
+    $lowStockThreshold = max(1, (int) Setting::get('low_stock_threshold', 5));
 
     return view('admin.dashboard', [
         'stats' => [
@@ -108,8 +109,35 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])
         ->name('admin.settings.index');
 
-    Route::post('/settings', [SettingController::class, 'update'])
+    // Legacy alias kept so anything posting to the old endpoint keeps working.
+    Route::post('/settings', [SettingController::class, 'updateGeneral'])
         ->name('admin.settings.update');
+
+    // --- Settings module: sections ---
+    Route::get('/settings/general', [SettingController::class, 'general'])
+        ->name('admin.settings.general');
+    Route::post('/settings/general', [SettingController::class, 'updateGeneral'])
+        ->name('admin.settings.general.update');
+
+    Route::get('/settings/products', [SettingController::class, 'products'])
+        ->name('admin.settings.products');
+    Route::post('/settings/products', [SettingController::class, 'updateProducts'])
+        ->name('admin.settings.products.update');
+
+    Route::get('/settings/shipping', [SettingController::class, 'shipping'])
+        ->name('admin.settings.shipping');
+    Route::post('/settings/shipping', [SettingController::class, 'updateShipping'])
+        ->name('admin.settings.shipping.update');
+
+    Route::get('/settings/checkout', [SettingController::class, 'checkout'])
+        ->name('admin.settings.checkout');
+    Route::post('/settings/checkout', [SettingController::class, 'updateCheckout'])
+        ->name('admin.settings.checkout.update');
+
+    // Sections listed on the overview but not implemented yet → roadmap page.
+    Route::get('/settings/{section}', [SettingController::class, 'section'])
+        ->where('section', 'storefront-branding|orders-notifications|policies-support|account-security')
+        ->name('admin.settings.section');
 
 
 

@@ -207,7 +207,7 @@
                 get lowStockCount() {
                     return this.variants.filter((variant) => {
                         const stock = parseInt(variant.stock_quantity, 10) || 0;
-                        return stock > 0 && stock <= 5;
+                        return stock > 0 && stock <= {{ (int) $lowStockThreshold }};
                     }).length;
                 },
 

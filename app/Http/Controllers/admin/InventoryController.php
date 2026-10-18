@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreInventoryAdjustmentRequest;
 use App\Models\InventoryMovement;
 use App\Models\ProductVariant;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,9 @@ class InventoryController extends Controller
 {
     public function index(Request $request)
     {
+        // Low-stock threshold managed in Settings → Products & Inventory.
+        $lowStockThreshold = max(1, (int) Setting::get('low_stock_threshold', 5));
+
         $query = ProductVariant::query()
             ->with('product:id,name')
             ->when($request->filled('search'), function ($query) use ($request) {
@@ -24,17 +28,17 @@ class InventoryController extends Controller
                         ->orWhereHas('product', fn ($p) => $p->where('name', 'like', "%{$term}%"));
                 });
             })
-            ->when($request->filled('stock'), function ($query) use ($request) {
+            ->when($request->filled('stock'), function ($query) use ($request, $lowStockThreshold) {
                 match ($request->input('stock')) {
                     'out' => $query->where('stock_quantity', 0),
-                    'low' => $query->whereBetween('stock_quantity', [1, 5]),
-                    'in' => $query->where('stock_quantity', '>', 5),
+                    'low' => $query->whereBetween('stock_quantity', [1, $lowStockThreshold]),
+                    'in' => $query->where('stock_quantity', '>', $lowStockThreshold),
                     default => null,
                 };
             })
             ->when($request->input('status') === 'inactive', fn ($q) => $q->where('is_active', false))
             ->when($request->input('status') === 'active', fn ($q) => $q->where('is_active', true))
-            ->orderByRaw('CASE WHEN stock_quantity = 0 THEN 0 WHEN stock_quantity <= 5 THEN 1 ELSE 2 END')
+            ->orderByRaw("CASE WHEN stock_quantity = 0 THEN 0 WHEN stock_quantity <= {$lowStockThreshold} THEN 1 ELSE 2 END")
             ->orderBy('stock_quantity')
             ->paginate(15)
             ->withQueryString();
@@ -42,7 +46,7 @@ class InventoryController extends Controller
         $summary = [
             'variants' => ProductVariant::count(),
             'units' => (int) ProductVariant::sum('stock_quantity'),
-            'low_stock' => ProductVariant::whereBetween('stock_quantity', [1, 5])->count(),
+            'low_stock' => ProductVariant::whereBetween('stock_quantity', [1, $lowStockThreshold])->count(),
             'out_of_stock' => ProductVariant::where('stock_quantity', 0)->count(),
         ];
 
@@ -52,14 +56,17 @@ class InventoryController extends Controller
             ->limit(8)
             ->get();
 
-        return view('admin.inventory.index', compact('query', 'summary', 'movements'));
+        return view('admin.inventory.index', compact('query', 'summary', 'movements', 'lowStockThreshold'));
     }
 
     public function adjust(ProductVariant $variant)
     {
         $variant->load('product:id,name');
 
-        return view('admin.inventory.adjust', compact('variant'));
+        return view('admin.inventory.adjust', [
+            'variant' => $variant,
+            'lowStockThreshold' => max(1, (int) Setting::get('low_stock_threshold', 5)),
+        ]);
     }
 
     public function storeAdjustment(StoreInventoryAdjustmentRequest $request, ProductVariant $variant)

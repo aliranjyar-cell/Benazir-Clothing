@@ -158,13 +158,15 @@
                                 @enderror
                             </div>
 
-                            <div class="space-y-space-xs">
-                                <label class="font-body-sm text-body-sm text-on-surface-variant">Notes for delivery
-                                    (optional)</label>
-                                <textarea name="customer_note" rows="3"
-                                    class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
-                                    placeholder="Leave at the front desk...">{{ old('customer_note') }}</textarea>
-                            </div>
+                            @if ($orderNotesEnabled)
+                                <div class="space-y-space-xs">
+                                    <label class="font-body-sm text-body-sm text-on-surface-variant">Notes for delivery
+                                        (optional)</label>
+                                    <textarea name="customer_note" rows="3"
+                                        class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
+                                        placeholder="Leave at the front desk...">{{ old('customer_note') }}</textarea>
+                                </div>
+                            @endif
 
                             <button type="submit"
                                 class="inline-flex items-center gap-space-sm rounded-lg bg-primary px-6 py-2.5 text-label-uppercase text-on-primary font-label-uppercase tracking-widest hover:bg-primary-container transition-colors">
@@ -211,9 +213,26 @@
                                 </dd>
                             </div>
                             <div class="flex justify-between">
-                                <dt class="text-on-surface-variant/80">Shipping</dt>
+                                <dt class="text-on-surface-variant/80">
+                                    Shipping
+                                    @if (filled($estimatedDelivery))
+                                        <span class="mt-0.5 block text-xs font-normal text-on-surface-variant/60">
+                                            Est. {{ $estimatedDelivery }}
+                                        </span>
+                                    @endif
+                                    @if ($freeShippingOver > 0 && ! $shippingFree)
+                                        <span class="mt-0.5 block text-xs font-normal text-secondary">
+                                            Free over {{ number_format($freeShippingOver, 2) }}
+                                            {{ config('storefront.currency_symbol', '₨') }}
+                                        </span>
+                                    @endif
+                                </dt>
                                 <dd class="font-display-hero font-headline-lg text-headline-lg text-primary">
-                                    {{ $shippingTotal }} {{ config('storefront.currency_symbol', '₨') }}
+                                    @if ($shippingFree)
+                                        Free
+                                    @else
+                                        {{ $shippingTotal }} {{ config('storefront.currency_symbol', '₨') }}
+                                    @endif
                                 </dd>
                             </div>
                             <div class="flex justify-between border-t border-outline-variant/40 pt-space-md">
@@ -227,8 +246,19 @@
                         </dl>
 
                         <p class="mt-space-md text-label-uppercase text-label-uppercase text-secondary">
-                            Cash on delivery only. Payment is due when your order is delivered.
+                            {{ $paymentNote }}
                         </p>
+
+                        @if (filled($bankDetails))
+                            <div class="mt-space-sm rounded-lg border border-outline-variant bg-surface-container-low p-space-md">
+                                <p class="font-label-uppercase text-label-uppercase text-secondary">
+                                    Bank transfer details
+                                </p>
+                                <p class="mt-space-xs whitespace-pre-line font-body-sm text-body-sm text-on-surface-variant">
+                                    {{ $bankDetails }}
+                                </p>
+                            </div>
+                        @endif
                     </section>
                 </div>
             </div>

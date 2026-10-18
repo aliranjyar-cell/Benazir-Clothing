@@ -69,7 +69,7 @@
                     <p class="mt-1 text-3xl font-semibold text-ink">{{ number_format((int) $variant->stock_quantity) }} <span class="text-sm font-normal text-muted">units</span></p>
                     @if((int) $variant->stock_quantity === 0)
                         <p class="mt-2 text-xs font-medium text-rose-600">Out of stock</p>
-                    @elseif((int) $variant->stock_quantity <= 5)
+                    @elseif((int) $variant->stock_quantity <= $lowStockThreshold)
                         <p class="mt-2 text-xs font-medium text-amber-700">Low stock</p>
                     @else
                         <p class="mt-2 text-xs font-medium text-emerald-700">Healthy stock level</p>

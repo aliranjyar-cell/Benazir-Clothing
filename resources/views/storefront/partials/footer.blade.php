@@ -55,7 +55,8 @@
                     <h3 class="font-title-editorial text-title-editorial text-primary tracking-wide font-headline-sm">
                         The Atelier
                         Circle</h3>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">Join the {{ config('storefront.store_name', 'Benazir') }} Atelier Circle for
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Join the
+                        {{ config('storefront.store_name', 'Benazir') }} Atelier Circle for
                         private
                         festive previews, bespoke trunk show invites, and curated heirloom releases.</p>
                     <form class="space-y-space-xs">
@@ -86,7 +87,30 @@
                 </div>
                 <p
                     class="font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider text-center md:text-right">
-                    © 2025 {{ config('storefront.store_name', 'Benazir Clothes') }}. All Rights Reserved. Crafted with reverence for Punjabi heritage.</p>
+                    © 2025 {{ config('storefront.store_name', 'Benazir Clothes') }}. All Rights Reserved. Crafted with
+                    reverence for Punjabi heritage.</p>
             </div>
         </div>
+
+        {{-- Developer credit: display only when approved and enabled --}}
+        @if (config('developer.enabled'))
+            <div class="border-t border-outline-variant/30 px-4 py-4 text-center">
+                <p class="text-xs leading-6 text-on-surface-variant">
+                    Website crafted by
+                    <a href="https://wa.me/{{ preg_replace('/\D+/', '', config('developer.whatsapp_number')) }}?text={{ rawurlencode(config('developer.whatsapp_message')) }}"
+                        target="_blank" rel="noopener noreferrer"
+                        class="font-medium text-primary underline-offset-4 transition-colors hover:text-secondary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                        aria-label="Contact {{ config('developer.name') }} about web development on WhatsApp">
+                        {{ config('developer.name') }}
+                    </a>
+                    <span class="mx-1 text-outline" aria-hidden="true">·</span>
+                    <a href="https://wa.me/{{ preg_replace('/\D+/', '', config('developer.whatsapp_number')) }}?text={{ rawurlencode(config('developer.whatsapp_message')) }}"
+                        target="_blank" rel="noopener noreferrer"
+                        class="text-primary transition-colors hover:text-secondary hover:underline">
+                        Web Development Services
+                    </a>
+                </p>
+            </div>
+        @endif
+
     </footer>

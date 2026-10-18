@@ -5,6 +5,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -53,7 +54,14 @@ class ProductController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.products.index', compact('products', 'categories', 'sort', 'direction'));
+        return view('admin.products.index', [
+            'products' => $products,
+            'categories' => $categories,
+            'sort' => $sort,
+            'direction' => $direction,
+            // Low-stock threshold managed in Settings → Products & Inventory.
+            'lowStockThreshold' => max(1, (int) Setting::get('low_stock_threshold', 5)),
+        ]);
     }
 
     /**
@@ -65,7 +73,10 @@ class ProductController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        return view('admin.products.create', compact('categories'));
+        return view('admin.products.create', [
+            'categories' => $categories,
+            'lowStockThreshold' => max(1, (int) Setting::get('low_stock_threshold', 5)),
+        ]);
     }
 
     /**
@@ -166,7 +177,11 @@ class ProductController extends Controller
             'variants' => fn ($query) => $query->orderBy('id'),
         ]);
 
-        return view('admin.products.edit', compact('product', 'categories'));
+        return view('admin.products.edit', [
+            'product' => $product,
+            'categories' => $categories,
+            'lowStockThreshold' => max(1, (int) Setting::get('low_stock_threshold', 5)),
+        ]);
     }
 
     /**

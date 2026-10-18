@@ -20,6 +20,17 @@ class Setting extends Model
         'CAD' => 'C$',
     ];
 
+    /**
+     * Payment methods an admin can offer in Settings → Checkout & Payments.
+     * Only the enabled methods are offered at checkout: AppServiceProvider
+     * writes the filtered map to config('storefront.checkout.payment_methods'),
+     * which CheckoutController uses for validation and display.
+     */
+    public const PAYMENT_METHODS = [
+        'cash_on_delivery' => 'Cash on Delivery',
+        'bank_transfer' => 'Bank Transfer',
+    ];
+
     protected $fillable = ['key', 'value'];
 
     /**
@@ -29,10 +40,13 @@ class Setting extends Model
 
     /**
      * Defaults used until an admin saves an override.
+     * Every key an admin section can save must exist here —
+     * allSettings() only exposes keys listed in this array.
      */
     public static function defaults(): array
     {
         return [
+            // --- General Store ---
             'store_name' => 'BENAZIR',
             'store_tagline' => 'Lahore • London • New York',
             'store_logo' => null,
@@ -43,6 +57,22 @@ class Setting extends Model
             'currency' => 'PKR',
             'timezone' => 'Asia/Karachi',
             'store_status' => 'open',
+
+            // --- Shipping & Delivery ---
+            'shipping_flat_fee' => '0',
+            'shipping_free_over' => '',
+            'shipping_estimated_days' => '3–5 business days',
+
+            // --- Checkout & Payments (JSON array of enabled method keys) ---
+            'payment_methods_enabled' => '["cash_on_delivery"]',
+            'checkout_default_payment_method' => 'cash_on_delivery',
+            'checkout_allow_guest' => '1',
+            'checkout_order_notes' => '1',
+            'checkout_bank_details' => '',
+
+            // --- Products & Inventory ---
+            'low_stock_threshold' => '5',
+            'products_per_page' => '12',
         ];
     }
 
@@ -79,6 +109,42 @@ class Setting extends Model
         static::query()->updateOrCreate(['key' => $key], ['value' => $value]);
 
         static::$runtimeSettings = null;
+    }
+
+    /**
+     * Read a JSON-array setting (e.g. payment_methods_enabled) as a real array.
+     *
+     * @return array<int, mixed>
+     */
+    public static function listValue(string $key, array $default = []): array
+    {
+        $value = static::get($key);
+
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if ($value === null || $value === '') {
+            return $default;
+        }
+
+        $decoded = json_decode((string) $value, true);
+
+        return is_array($decoded) ? $decoded : $default;
+    }
+
+    /**
+     * Read a "0"/"1" toggle setting as a boolean.
+     */
+    public static function bool(string $key, bool $default = false): bool
+    {
+        $value = static::get($key);
+
+        if ($value === null || $value === '') {
+            return $default;
+        }
+
+        return in_array(strtolower((string) $value), ['1', 'true', 'yes', 'on'], true);
     }
 
     /**

@@ -31,5 +31,6 @@
         'method' => 'PATCH',
         'product' => $product,
         'submitLabel' => 'Save changes',
+        'lowStockThreshold' => $lowStockThreshold,
     ])
 @endsection

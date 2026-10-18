@@ -67,6 +67,37 @@ class AppServiceProvider extends ServiceProvider
         // Mail sender name follows the admin-managed store name too
         Config::set('mail.from.name', $settings['store_name']);
 
+        // --- Shipping & Delivery (Settings → Shipping & Delivery) ---
+        Config::set('storefront.checkout.shipping_flat', (float) $settings['shipping_flat_fee']);
+        Config::set('storefront.checkout.shipping_free_over', (float) ($settings['shipping_free_over'] ?: 0));
+        Config::set('storefront.shipping.estimated_days', (string) $settings['shipping_estimated_days']);
+
+        // --- Checkout & Payments (Settings → Checkout & Payments) ---
+        $enabledMethods = array_values(array_intersect(
+            Setting::listValue('payment_methods_enabled', ['cash_on_delivery']),
+            array_keys(Setting::PAYMENT_METHODS)
+        ));
+
+        if ($enabledMethods === []) {
+            $enabledMethods = ['cash_on_delivery'];
+        }
+
+        $methodMap = array_intersect_key(Setting::PAYMENT_METHODS, array_flip($enabledMethods));
+        $defaultMethod = (string) $settings['checkout_default_payment_method'];
+
+        if (! isset($methodMap[$defaultMethod])) {
+            $defaultMethod = (string) array_key_first($methodMap);
+        }
+
+        Config::set('storefront.checkout.payment_methods', $methodMap);
+        Config::set('storefront.checkout.default_payment_method', $defaultMethod);
+        Config::set('storefront.checkout.allow_guest_checkout', Setting::bool('checkout_allow_guest', true));
+        Config::set('storefront.checkout.order_notes_enabled', Setting::bool('checkout_order_notes', true));
+        Config::set('storefront.checkout.bank_details', (string) $settings['checkout_bank_details']);
+
+        // --- Products & Inventory (Settings → Products & Inventory) ---
+        Config::set('storefront.catalog.per_page', max(1, (int) $settings['products_per_page']));
+
         if (in_array($settings['timezone'], \DateTimeZone::listIdentifiers(), true)) {
             date_default_timezone_set($settings['timezone']);
         }

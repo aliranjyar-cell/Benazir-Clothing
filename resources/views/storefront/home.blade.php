@@ -362,8 +362,7 @@
                                         stitched flat to prevent fraying and ensure a luminous royal gleam.</p>
                                 </div>
                             </div>
-                            <div
-                                class="reveal reveal-up flex items-start gap-space-sm p-space-md bg-surface-container-lowest rounded-xl shadow-xs"
+                            <div class="reveal reveal-up flex items-start gap-space-sm p-space-md bg-surface-container-lowest rounded-xl shadow-xs"
                                 style="transition-delay: 100ms">
                                 <span class="material-symbols-outlined text-secondary mt-0.5">straighten</span>
                                 <div>
@@ -409,8 +408,7 @@
                                 shipping across the US, UK, Canada &amp; UAE on all orders over $250.</p>
                         </div>
                     </div>
-                    <div
-                        class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
+                    <div class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
                         style="transition-delay: 90ms">
                         <div
                             class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center text-secondary shadow-xs shrink-0">
@@ -424,8 +422,7 @@
                                 salwar kameez, lehenga, or gharara before master cutting begins.</p>
                         </div>
                     </div>
-                    <div
-                        class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
+                    <div class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
                         style="transition-delay: 180ms">
                         <div
                             class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center text-secondary shadow-xs shrink-0">
@@ -439,8 +436,7 @@
                                 silk, chiffon, and velvet certified by traditional Punjabi weaving guilds.</p>
                         </div>
                     </div>
-                    <div
-                        class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
+                    <div class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
                         style="transition-delay: 270ms">
                         <div
                             class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center text-secondary shadow-xs shrink-0">
@@ -508,8 +504,7 @@
                         </div>
                     </div>
                     <!-- Review 2 -->
-                    <div
-                        class="reveal reveal-up bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between"
+                    <div class="reveal reveal-up bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between"
                         style="transition-delay: 90ms">
                         <div>
                             <div class="flex items-center gap-1 text-secondary mb-space-sm">
@@ -528,7 +523,8 @@
                                 class="font-body-md text-body-md text-on-surface-variant italic leading-relaxed mb-space-md">
                                 “Ordered the Nafisa sage kameez for my brother's Anand Karaj. The resham work is
                                 subtle yet so rich
-                                under sunlight. Express DHL reached New York in just 4 business days. {{ config('storefront.store_name', 'Benazir') }} is
+                                under sunlight. Express DHL reached New York in just 4 business days.
+                                {{ config('storefront.store_name', 'Benazir') }} is
                                 unmatched.”
                             </p>
                         </div>
@@ -547,8 +543,7 @@
                         </div>
                     </div>
                     <!-- Review 3 -->
-                    <div
-                        class="reveal reveal-up bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between"
+                    <div class="reveal reveal-up bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between"
                         style="transition-delay: 180ms">
                         <div>
                             <div class="flex items-center gap-1 text-secondary mb-space-sm">
@@ -596,14 +591,17 @@
                         <span
                             class="font-label-uppercase text-label-uppercase tracking-[0.2em] text-secondary uppercase block mb-1">Visual
                             Chronicle</span>
-                        <h2 class="font-headline-lg text-headline-lg text-primary font-serif">#{{ preg_replace('/\s+/', '', config('storefront.store_name', 'Benazir')) }}Atelier</h2>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Tag @ {{ preg_replace('/\s+/', '', config('storefront.store_name', 'Benazir')) }} on
+                        <h2 class="font-headline-lg text-headline-lg text-primary font-serif">
+                            #{{ preg_replace('/\s+/', '', config('storefront.store_name', 'Benazir')) }}Atelier</h2>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Tag @
+                            {{ preg_replace('/\s+/', '', config('storefront.store_name', 'Benazir')) }} on
                             your celebratory
                             moments to be showcased in our global archive.</p>
                     </div>
                     <div>
                         <a class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-primary hover:text-secondary font-label-uppercase text-label-uppercase tracking-widest uppercase rounded-lg shadow-sm transition-colors"
-                            href="https://www.instagram.com/{{ config('storefront.settings.instagram', 'BenazirClothes') }}/" target="_blank" rel="noopener noreferrer">
+                            href="https://www.instagram.com/{{ config('storefront.settings.instagram', 'BenazirClothes') }}/"
+                            target="_blank" rel="noopener noreferrer">
                             <span class="material-symbols-outlined text-base">photo_camera</span>
                             <span>Follow on Instagram</span>
                         </a>
@@ -614,7 +612,7 @@
                         style="transition-delay: 0ms">
                         <img alt="Atelier moment 1"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            src=" {{ asset('images/footer/0FThkiJxfFOXFTO0osCnTzaZ6MagHJ9rJQEmn7qe2gxvkJkclCeDk8Ac8QBTdGe6dBQr3VAId_Ki3ePvnLRjrNrkuDjhZAo2cunT46wM-tRzr7m76yz5MPth7DE_F7uJNx2aO84hFMryGEc92eNGb3NdOpnB1myyeDFZ-z4G_2Xs8ip1xPAfeUK6-N93RfTK.webp')}} " />
+                            src=" {{ asset('images/footer/0FThkiJxfFOXFTO0osCnTzaZ6MagHJ9rJQEmn7qe2gxvkJkclCeDk8Ac8QBTdGe6dBQr3VAId_Ki3ePvnLRjrNrkuDjhZAo2cunT46wM-tRzr7m76yz5MPth7DE_F7uJNx2aO84hFMryGEc92eNGb3NdOpnB1myyeDFZ-z4G_2Xs8ip1xPAfeUK6-N93RfTK.webp') }} " />
                         <div
                             class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
                             <span class="material-symbols-outlined text-2xl">favorite</span>
@@ -654,6 +652,68 @@
             </div>
         </section>
     </div>
+
+    {{-- Developer services promotion --}}
+    @if (config('developer.enabled') && config('developer.whatsapp_number'))
+        <section aria-labelledby="developer-promotion-title"
+            class="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+
+            <div
+                class="relative overflow-hidden border border-outline-variant/40 bg-surface-container-low px-6 py-10 sm:px-10 sm:py-14 lg:px-16">
+
+                {{-- Subtle decorative accent --}}
+                <div aria-hidden="true" class="absolute left-0 top-0 h-full w-1 bg-primary">
+                </div>
+
+                <div class="mx-auto max-w-3xl text-center">
+
+                    <p class="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-secondary">
+                        Web Development Services
+                    </p>
+
+                    <h2 id="developer-promotion-title"
+                        class="font-headline-lg text-3xl leading-tight text-on-surface sm:text-4xl lg:text-5xl">
+                        {{ config('developer.headline') }}
+                    </h2>
+
+                    <p class="mx-auto mt-5 max-w-2xl text-sm leading-7 text-on-surface-variant sm:text-base">
+                        {{ config('developer.description') }}
+                    </p>
+
+                    {{-- Services --}}
+                    <ul class="mx-auto mt-7 flex max-w-2xl flex-wrap justify-center gap-2">
+
+                        @foreach (config('developer.services', []) as $service)
+                            <li
+                                class="border border-outline-variant/40 bg-surface px-3 py-2 text-xs text-on-surface-variant sm:text-sm">
+                                {{ $service }}
+                            </li>
+                        @endforeach
+
+                    </ul>
+
+                    {{-- WhatsApp contact --}}
+                    <div class="mt-8">
+                        <a href="https://wa.me/{{ preg_replace('/\D+/', '', config('developer.whatsapp_number')) }}?text={{ rawurlencode(config('developer.whatsapp_message')) }}"
+                            target="_blank" rel="noopener noreferrer"
+                            class="inline-flex min-h-12 items-center justify-center gap-2 border border-primary bg-primary px-6 py-3 text-sm font-medium text-on-primary transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+                            <span class="material-symbols-outlined text-xl" aria-hidden="true">
+                                chat
+                            </span>
+
+                            Discuss Your Project on WhatsApp
+                        </a>
+                    </div>
+
+                    <p class="mt-4 text-xs text-outline">
+                        Websites · E-commerce · Custom Admin Panels
+                    </p>
+
+                </div>
+            </div>
+        </section>
+    @endif
+
 @endsection
 
 @section('footer')
@@ -731,7 +791,8 @@
                     <h3 class="font-title-editorial text-title-editorial text-primary tracking-wide font-headline-sm">
                         The Atelier
                         Circle</h3>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">Join the {{ config('storefront.store_name', 'Benazir') }} Atelier Circle for
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Join the
+                        {{ config('storefront.store_name', 'Benazir') }} Atelier Circle for
                         private
                         festive previews, bespoke trunk show invites, and curated heirloom releases.</p>
                     <form class="space-y-space-xs">
@@ -762,7 +823,8 @@
                 </div>
                 <p
                     class="font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider text-center md:text-right">
-                    © 2025 {{ config('storefront.store_name', 'Benazir Clothes') }}. All Rights Reserved. Crafted with reverence for Punjabi heritage.</p>
+                    © 2025 {{ config('storefront.store_name', 'Benazir Clothes') }}. All Rights Reserved. Crafted with
+                    reverence for Punjabi heritage.</p>
             </div>
         </div>
     </footer>

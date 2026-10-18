@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
@@ -28,6 +27,12 @@ class CheckoutController extends Controller
      */
     public function show(Request $request): View|RedirectResponse
     {
+        if (! config('storefront.checkout.allow_guest_checkout', true) && ! auth('web')->check()) {
+            return redirect()
+                ->route('store.login')
+                ->with('error', 'Please sign in to place your order.');
+        }
+
         $lines = $this->cart->lines();
 
         if ($lines->isEmpty()) {
@@ -46,7 +51,7 @@ class CheckoutController extends Controller
         }
 
         $subtotal = (float) $lines->sum('line_total');
-        $shippingTotal = $this->shippingTotal();
+        $shippingTotal = $this->shippingTotal($subtotal);
         $request->session()->put('storefront.checkout_tokens', $checkoutTokens);
 
         return view('storefront.checkout', [
@@ -56,6 +61,14 @@ class CheckoutController extends Controller
             'grandTotal' => $subtotal + $shippingTotal,
             'paymentMethods' => $this->paymentMethods(),
             'defaultPaymentMethod' => config('storefront.checkout.default_payment_method'),
+            'paymentNote' => $this->paymentNote(),
+            'bankDetails' => config('storefront.checkout.default_payment_method') === 'bank_transfer'
+                ? (string) config('storefront.checkout.bank_details', '')
+                : '',
+            'orderNotesEnabled' => (bool) config('storefront.checkout.order_notes_enabled', true),
+            'estimatedDelivery' => (string) config('storefront.shipping.estimated_days', ''),
+            'freeShippingOver' => (float) config('storefront.checkout.shipping_free_over', 0),
+            'shippingFree' => $this->isFreeShipping($subtotal),
             'customer' => auth('web')->user(),
             'checkoutToken' => $checkoutToken,
         ]);
@@ -69,6 +82,12 @@ class CheckoutController extends Controller
      */
     public function store(Request $request, OrderNotificationService $notifications): RedirectResponse
     {
+        if (! config('storefront.checkout.allow_guest_checkout', true) && ! auth('web')->check()) {
+            return redirect()
+                ->route('store.login')
+                ->with('error', 'Please sign in to place your order.');
+        }
+
         $validated = $request->validate([
             'checkout_token' => ['required', 'uuid'],
             'customer_name' => ['required', 'string', 'max:255'],
@@ -190,7 +209,7 @@ class CheckoutController extends Controller
                     ];
                 }
 
-                $shippingTotal = $this->shippingTotal();
+                $shippingTotal = $this->shippingTotal($subtotal);
 
                 $order = Order::create([
                     'order_number' => $this->generateOrderNumber(),
@@ -283,9 +302,43 @@ class CheckoutController extends Controller
         ]);
     }
 
-    private function shippingTotal(): float
+    /**
+     * Flat delivery fee from the admin settings, dropped to zero once
+     * the bag reaches the free-shipping threshold
+     * (Settings → Shipping & Delivery).
+     */
+    private function shippingTotal(float $subtotal): float
     {
+        if ($this->isFreeShipping($subtotal)) {
+            return 0.0;
+        }
+
         return (float) config('storefront.checkout.shipping_flat', 0);
+    }
+
+    /**
+     * Free shipping applies only when a threshold is configured
+     * and the subtotal has reached it.
+     */
+    private function isFreeShipping(float $subtotal): bool
+    {
+        $freeOver = (float) config('storefront.checkout.shipping_free_over', 0);
+
+        return $freeOver > 0 && $subtotal >= $freeOver;
+    }
+
+    /**
+     * Checkout order-summary note describing the enabled payment methods.
+     */
+    private function paymentNote(): string
+    {
+        $methods = $this->paymentMethods();
+
+        if (array_keys($methods) === ['cash_on_delivery']) {
+            return 'Cash on delivery only. Payment is due when your order is delivered.';
+        }
+
+        return 'Payment: ' . implode(' or ', $methods) . '.';
     }
 
     private function generateOrderNumber(): string

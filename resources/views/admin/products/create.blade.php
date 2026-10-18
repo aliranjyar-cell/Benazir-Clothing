@@ -21,5 +21,6 @@
         'method' => null,
         'product' => null,
         'submitLabel' => 'Create product',
+        'lowStockThreshold' => $lowStockThreshold,
     ])
 @endsection

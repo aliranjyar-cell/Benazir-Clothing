@@ -22,7 +22,7 @@
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            @foreach ([['label' => 'Tracked variants', 'value' => number_format($summary['variants']), 'hint' => 'Individual size and colour combinations', 'icon' => 'fa-cubes', 'tone' => 'lilac'], ['label' => 'Units on hand', 'value' => number_format($summary['units']), 'hint' => 'Current total across variants', 'icon' => 'fa-boxes-stacked', 'tone' => 'mint'], ['label' => 'Low stock', 'value' => number_format($summary['low_stock']), 'hint' => 'Between 1 and 5 units', 'icon' => 'fa-triangle-exclamation', 'tone' => 'rose'], ['label' => 'Out of stock', 'value' => number_format($summary['out_of_stock']), 'hint' => 'Variants with zero units', 'icon' => 'fa-circle-exclamation', 'tone' => 'rose']] as $card)
+            @foreach ([['label' => 'Tracked variants', 'value' => number_format($summary['variants']), 'hint' => 'Individual size and colour combinations', 'icon' => 'fa-cubes', 'tone' => 'lilac'], ['label' => 'Units on hand', 'value' => number_format($summary['units']), 'hint' => 'Current total across variants', 'icon' => 'fa-boxes-stacked', 'tone' => 'mint'], ['label' => 'Low stock', 'value' => number_format($summary['low_stock']), 'hint' => 'Between 1 and ' . $lowStockThreshold . ' units', 'icon' => 'fa-triangle-exclamation', 'tone' => 'rose'], ['label' => 'Out of stock', 'value' => number_format($summary['out_of_stock']), 'hint' => 'Variants with zero units', 'icon' => 'fa-circle-exclamation', 'tone' => 'rose']] as $card)
                 <div class="rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
                     <div class="flex items-start justify-between gap-3">
                         <p class="text-xs font-semibold uppercase tracking-[.14em] text-muted">{{ $card['label'] }}</p>
@@ -53,7 +53,7 @@
                             class="rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-ink focus:border-lilac focus:ring-2 focus:ring-lilac/30">
                             <option value="">All stock levels</option>
                             <option value="out" @selected(request('stock') === 'out')>Out of stock</option>
-                            <option value="low" @selected(request('stock') === 'low')>Low stock (1–5)</option>
+                            <option value="low" @selected(request('stock') === 'low')>Low stock (1–{{ $lowStockThreshold }})</option>
                             <option value="in" @selected(request('stock') === 'in')>In stock (6+)</option>
                         </select>
                         <select name="status"
@@ -88,7 +88,7 @@
                                 $stockClass =
                                     $stock === 0
                                         ? 'bg-rose-50 text-rose-700'
-                                        : ($stock <= 5
+                                        : ($stock <= $lowStockThreshold
                                             ? 'bg-amber-50 text-amber-700'
                                             : 'bg-emerald-50 text-emerald-700');
                             @endphp
