@@ -53,7 +53,7 @@
             'label' => 'Administration',
             'items' => [
                 ['label' => 'Staff &amp; Permissions', 'icon' => 'shield'],
-                ['label' => 'Settings', 'icon' => 'cog'],
+                ['label' => 'Settings', 'icon' => 'cog', 'route' => 'admin.settings.index', 'matches' => 'admin.settings.*'],
             ],
         ],
     ];
@@ -76,7 +76,7 @@
             </span>
             <span class="min-w-0">
                 <span class="block text-[15px] font-semibold leading-tight tracking-[0.24em] text-white">
-                    AURELLE
+                    {{ strtoupper(config('storefront.store_name', 'AURELLE')) }}
                 </span>
                 <span
                     class="mt-0.5 block text-[9px] font-medium uppercase leading-tight tracking-[0.22em] text-lilac/80">

@@ -16,7 +16,7 @@
             </nav>
 
             <div class="border-b border-outline-variant/50 pb-space-lg">
-                <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">BENAZIR Atelier</p>
+                <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">{{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} Atelier</p>
                 <h1 class="mt-space-sm font-display-hero font-headline-lg text-headline-lg text-primary">
                     Your Shopping Bag
                 </h1>
@@ -84,7 +84,7 @@
                                             <div class="min-w-0 flex-1">
                                                 <p
                                                     class="font-label-uppercase text-label-uppercase tracking-wider text-secondary">
-                                                    {{ $product?->category?->name ?? 'BENAZIR Collection' }}
+                                                    {{ $product?->category?->name ?? config('storefront.store_name', 'BENAZIR') . ' Collection' }}
                                                 </p>
                                                 <h2 class="mt-1 font-display-hero text-xl text-primary">
                                                     {{ $product?->name ?? 'Product' }}
@@ -228,7 +228,7 @@
                             </div>
 
                             <p class="mt-space-md text-center font-body-sm text-body-sm text-on-surface-variant">
-                                Carefully packed with care by BENAZIR.
+                                Carefully packed with care by {{ config('storefront.store_name', 'BENAZIR') }}.
                             </p>
                         </div>
 
@@ -250,7 +250,7 @@
                         class="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-secondary/30 bg-surface-container-low">
                         <span class="material-symbols-outlined text-4xl text-secondary">shopping_bag</span>
                     </div>
-                    <p class="mt-space-lg font-label-uppercase text-label-uppercase tracking-widest text-secondary">BENAZIR
+                    <p class="mt-space-lg font-label-uppercase text-label-uppercase tracking-widest text-secondary">{{ strtoupper(config('storefront.store_name', 'BENAZIR')) }}
                         Atelier</p>
                     <h2 class="mt-space-sm font-display-hero text-3xl text-primary sm:text-4xl">Your bag is waiting for
                         something beautiful.</h2>

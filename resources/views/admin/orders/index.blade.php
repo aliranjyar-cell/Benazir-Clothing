@@ -36,7 +36,7 @@
             <div>
                 <div class="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-ink/50">
                     <span class="h-1.5 w-1.5 rounded-full bg-lilac"></span>
-                    AURELLE / Commerce
+                    {{ strtoupper(config('storefront.store_name', 'AURELLE')) }} / Commerce
                 </div>
 
                 <h1 class="text-2xl font-semibold tracking-tight text-ink sm:text-[28px]">

@@ -3,7 +3,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl">
                 <div class="space-y-space-md">
                     <div class="space-y-space-xs"><span
-                            class="font-headline-md text-headline-md tracking-wider text-primary font-display-hero uppercase">Benazir</span>
+                            class="font-headline-md text-headline-md tracking-wider text-primary font-display-hero uppercase">{{ config('storefront.store_name', 'Benazir') }}</span>
                         <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary uppercase">
                             Haute Couture
                             • Pret-a-Porter</p>
@@ -55,7 +55,7 @@
                     <h3 class="font-title-editorial text-title-editorial text-primary tracking-wide font-headline-sm">
                         The Atelier
                         Circle</h3>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">Join the Benazir Atelier Circle for
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Join the {{ config('storefront.store_name', 'Benazir') }} Atelier Circle for
                         private
                         festive previews, bespoke trunk show invites, and curated heirloom releases.</p>
                     <form class="space-y-space-xs">
@@ -86,7 +86,7 @@
                 </div>
                 <p
                     class="font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider text-center md:text-right">
-                    © 2025 Benazir Clothes. All Rights Reserved. Crafted with reverence for Punjabi heritage.</p>
+                    © 2025 {{ config('storefront.store_name', 'Benazir Clothes') }}. All Rights Reserved. Crafted with reverence for Punjabi heritage.</p>
             </div>
         </div>
     </footer>

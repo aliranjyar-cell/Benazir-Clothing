@@ -13,7 +13,7 @@
 
     <a href="{{ route('store.home') }}"
         class="mx-auto mt-8 block text-center font-serif text-[17vw] leading-none tracking-[-0.07em] text-[#f5e8dc] transition-colors duration-300 hover:text-[#d7b59e] sm:text-[16vw] lg:text-[17.5vw]">
-        AURELLE
+        {{ strtoupper(config('storefront.store_name', 'AURELLE')) }}
     </a>
 
     <nav aria-label="Footer navigation"
@@ -35,7 +35,7 @@
     <div
         class="mx-auto flex max-w-[1500px] flex-col items-center justify-between gap-4 border-t border-white/20 pt-6 text-center text-[10px] leading-6 text-[#b7a59a] sm:flex-row">
 
-        <p>© {{ date('Y') }} AURELLE. All rights reserved.</p>
+        <p>© {{ date('Y') }} {{ config('storefront.store_name', 'AURELLE') }}. All rights reserved.</p>
 
         <div class="flex gap-5">
             <a href="https://www.instagram.com/BenazirClothes/" target="_blank" rel="noopener noreferrer"

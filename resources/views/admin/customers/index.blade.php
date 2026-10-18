@@ -15,7 +15,7 @@
                     Customers
                 </h1>
                 <p class="mt-1 text-sm text-muted">
-                    Understand your customers, their purchases, and their relationship with AURELLE.
+                    Understand your customers, their purchases, and their relationship with {{ config('storefront.store_name', 'AURELLE') }}.
                 </p>
             </div>
 

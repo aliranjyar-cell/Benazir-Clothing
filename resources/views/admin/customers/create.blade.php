@@ -13,7 +13,7 @@
                 Add Customer
             </h1>
             <p class="mt-1 text-sm text-muted">
-                Create a customer profile for AURELLE.
+                Create a customer profile for {{ config('storefront.store_name', 'AURELLE') }}.
             </p>
         </div>
 

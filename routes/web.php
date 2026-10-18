@@ -10,6 +10,7 @@ use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\PurchaseOrderController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Storefront\HomeController;
 use App\Http\Controllers\Storefront\ShopController;
 use App\Http\Controllers\Storefront\CartController;
@@ -102,6 +103,13 @@ Route::middleware('auth:admin')->group(function () {
 
     Route::patch('/orders/{order}/payment', [OrderController::class, 'updatePayment'])
         ->name('admin.orders.payment.update');
+
+
+    Route::get('/settings', [SettingController::class, 'index'])
+        ->name('admin.settings.index');
+
+    Route::post('/settings', [SettingController::class, 'update'])
+        ->name('admin.settings.update');
 
 
 

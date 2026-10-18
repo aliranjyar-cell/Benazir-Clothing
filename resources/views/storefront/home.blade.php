@@ -224,15 +224,17 @@
                         </a>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg ">
                     @forelse ($products as $product)
-                        @include('storefront.partials.product-card', [
-                            'product' => $product,
-                            'showDescription' => false,
-                            'showSizes' => false,
-                            'cardRadius' => 'rounded-md',
-                            'compact' => true,
-                        ])
+                        <div class="reveal reveal-up" style="transition-delay: {{ ($loop->index % 4) * 90 }}ms">
+                            @include('storefront.partials.product-card', [
+                                'product' => $product,
+                                'showDescription' => false,
+                                'showSizes' => false,
+                                'cardRadius' => 'rounded-md',
+                                'compact' => true,
+                            ])
+                        </div>
                     @empty
                         <p class="col-span-full py-space-xl text-center text-on-surface-variant">No products are
                             available right now.</p>
@@ -311,7 +313,7 @@
                                     Chandigarh.”
                                 </blockquote>
                                 <p class="font-label-uppercase text-xs tracking-widest text-on-primary/80 uppercase mt-2">
-                                    — Benazir
+                                    — {{ config('storefront.store_name', 'Benazir') }}
                                     Atelier Master Karkhana</p>
                             </div>
                         </div>
@@ -349,7 +351,7 @@
                         </p>
                         <div class="space-y-space-md">
                             <div
-                                class="flex items-start gap-space-sm p-space-md bg-surface-container-lowest rounded-xl shadow-xs">
+                                class="reveal reveal-up flex items-start gap-space-sm p-space-md bg-surface-container-lowest rounded-xl shadow-xs">
                                 <span class="material-symbols-outlined text-secondary mt-0.5">diamond</span>
                                 <div>
                                     <h4 class="font-title-editorial text-title-editorial text-primary font-serif">
@@ -361,7 +363,8 @@
                                 </div>
                             </div>
                             <div
-                                class="flex items-start gap-space-sm p-space-md bg-surface-container-lowest rounded-xl shadow-xs">
+                                class="reveal reveal-up flex items-start gap-space-sm p-space-md bg-surface-container-lowest rounded-xl shadow-xs"
+                                style="transition-delay: 100ms">
                                 <span class="material-symbols-outlined text-secondary mt-0.5">straighten</span>
                                 <div>
                                     <h4 class="font-title-editorial text-title-editorial text-primary font-serif">
@@ -393,7 +396,7 @@
             <div class="max-w-7xl mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
                     <div
-                        class="flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs">
+                        class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs">
                         <div
                             class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center text-secondary shadow-xs shrink-0">
                             <span class="material-symbols-outlined text-2xl">flight_takeoff</span>
@@ -407,7 +410,8 @@
                         </div>
                     </div>
                     <div
-                        class="flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs">
+                        class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
+                        style="transition-delay: 90ms">
                         <div
                             class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center text-secondary shadow-xs shrink-0">
                             <span class="material-symbols-outlined text-2xl">design_services</span>
@@ -421,7 +425,8 @@
                         </div>
                     </div>
                     <div
-                        class="flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs">
+                        class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
+                        style="transition-delay: 180ms">
                         <div
                             class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center text-secondary shadow-xs shrink-0">
                             <span class="material-symbols-outlined text-2xl">verified</span>
@@ -435,7 +440,8 @@
                         </div>
                     </div>
                     <div
-                        class="flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs">
+                        class="reveal reveal-up flex items-start gap-space-md p-space-md rounded-2xl bg-surface-container-low/60 shadow-xs"
+                        style="transition-delay: 270ms">
                         <div
                             class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center text-secondary shadow-xs shrink-0">
                             <span class="material-symbols-outlined text-2xl">support_agent</span>
@@ -465,7 +471,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
                     <!-- Review 1 -->
                     <div
-                        class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
+                        class="reveal reveal-up bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-1 text-secondary mb-space-sm">
                                 <span class="material-symbols-outlined text-sm"
@@ -503,7 +509,8 @@
                     </div>
                     <!-- Review 2 -->
                     <div
-                        class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
+                        class="reveal reveal-up bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between"
+                        style="transition-delay: 90ms">
                         <div>
                             <div class="flex items-center gap-1 text-secondary mb-space-sm">
                                 <span class="material-symbols-outlined text-sm"
@@ -521,7 +528,7 @@
                                 class="font-body-md text-body-md text-on-surface-variant italic leading-relaxed mb-space-md">
                                 “Ordered the Nafisa sage kameez for my brother's Anand Karaj. The resham work is
                                 subtle yet so rich
-                                under sunlight. Express DHL reached New York in just 4 business days. Benazir is
+                                under sunlight. Express DHL reached New York in just 4 business days. {{ config('storefront.store_name', 'Benazir') }} is
                                 unmatched.”
                             </p>
                         </div>
@@ -541,7 +548,8 @@
                     </div>
                     <!-- Review 3 -->
                     <div
-                        class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
+                        class="reveal reveal-up bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between"
+                        style="transition-delay: 180ms">
                         <div>
                             <div class="flex items-center gap-1 text-secondary mb-space-sm">
                                 <span class="material-symbols-outlined text-sm"
@@ -588,21 +596,22 @@
                         <span
                             class="font-label-uppercase text-label-uppercase tracking-[0.2em] text-secondary uppercase block mb-1">Visual
                             Chronicle</span>
-                        <h2 class="font-headline-lg text-headline-lg text-primary font-serif">#BenazirAtelier</h2>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Tag @BenazirClothes on
+                        <h2 class="font-headline-lg text-headline-lg text-primary font-serif">#{{ preg_replace('/\s+/', '', config('storefront.store_name', 'Benazir')) }}Atelier</h2>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Tag @ {{ preg_replace('/\s+/', '', config('storefront.store_name', 'Benazir')) }} on
                             your celebratory
                             moments to be showcased in our global archive.</p>
                     </div>
                     <div>
                         <a class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-primary hover:text-secondary font-label-uppercase text-label-uppercase tracking-widest uppercase rounded-lg shadow-sm transition-colors"
-                            href="https://www.instagram.com/BenazirClothes/" target="_blank" rel="noopener noreferrer">
+                            href="https://www.instagram.com/{{ config('storefront.settings.instagram', 'BenazirClothes') }}/" target="_blank" rel="noopener noreferrer">
                             <span class="material-symbols-outlined text-base">photo_camera</span>
                             <span>Follow on Instagram</span>
                         </a>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-space-md">
-                    <div class="group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs">
+                    <div class="reveal reveal-up group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs"
+                        style="transition-delay: 0ms">
                         <img alt="Atelier moment 1"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             src=" {{ asset('images/footer/0FThkiJxfFOXFTO0osCnTzaZ6MagHJ9rJQEmn7qe2gxvkJkclCeDk8Ac8QBTdGe6dBQr3VAId_Ki3ePvnLRjrNrkuDjhZAo2cunT46wM-tRzr7m76yz5MPth7DE_F7uJNx2aO84hFMryGEc92eNGb3NdOpnB1myyeDFZ-z4G_2Xs8ip1xPAfeUK6-N93RfTK.webp')}} " />
@@ -611,7 +620,8 @@
                             <span class="material-symbols-outlined text-2xl">favorite</span>
                         </div>
                     </div>
-                    <div class="group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs">
+                    <div class="reveal reveal-up group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs"
+                        style="transition-delay: 90ms">
                         <img alt="Atelier moment 2"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             src=" {{ asset('images/footer/pexels-dhanno-28759961.webp') }}" />
@@ -620,7 +630,8 @@
                             <span class="material-symbols-outlined text-2xl">favorite</span>
                         </div>
                     </div>
-                    <div class="group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs">
+                    <div class="reveal reveal-up group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs"
+                        style="transition-delay: 180ms">
                         <img alt="Atelier moment 3"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             src=" {{ asset('images/footer/pexels-dhanno-25184995.webp') }}" />
@@ -629,7 +640,8 @@
                             <span class="material-symbols-outlined text-2xl">favorite</span>
                         </div>
                     </div>
-                    <div class="group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs">
+                    <div class="reveal reveal-up group relative aspect-square rounded-2xl overflow-hidden bg-surface-container shadow-xs"
+                        style="transition-delay: 270ms">
                         <img alt="Atelier moment 4"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             src=" {{ asset('images/footer/pexels-dhanno-29460548.jpg') }}" />
@@ -650,7 +662,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl">
                 <div class="space-y-space-md">
                     <div class="space-y-space-xs"><span
-                            class="font-headline-md text-headline-md tracking-wider text-primary font-display-hero uppercase">Benazir</span>
+                            class="font-headline-md text-headline-md tracking-wider text-primary font-display-hero uppercase">{{ config('storefront.store_name', 'Benazir') }}</span>
                         <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary uppercase">
                             Haute Couture
                             • Pret-a-Porter</p>
@@ -719,7 +731,7 @@
                     <h3 class="font-title-editorial text-title-editorial text-primary tracking-wide font-headline-sm">
                         The Atelier
                         Circle</h3>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">Join the Benazir Atelier Circle for
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Join the {{ config('storefront.store_name', 'Benazir') }} Atelier Circle for
                         private
                         festive previews, bespoke trunk show invites, and curated heirloom releases.</p>
                     <form class="space-y-space-xs">
@@ -750,7 +762,7 @@
                 </div>
                 <p
                     class="font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider text-center md:text-right">
-                    © 2025 Benazir Clothes. All Rights Reserved. Crafted with reverence for Punjabi heritage.</p>
+                    © 2025 {{ config('storefront.store_name', 'Benazir Clothes') }}. All Rights Reserved. Crafted with reverence for Punjabi heritage.</p>
             </div>
         </div>
     </footer>

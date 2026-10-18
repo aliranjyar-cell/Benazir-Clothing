@@ -1,7 +1,7 @@
 
 @extends('storefront.layouts.store')
 
-@section('title', 'Our Story | BENAZIR')
+@section('title', 'Our Story | ' . config('storefront.store_name', 'BENAZIR'))
 
 @section('content')
 <section class="relative overflow-hidden bg-background">
@@ -14,7 +14,7 @@
                 <div class="mb-6 flex items-center gap-3">
                     <span class="h-px w-10 bg-secondary"></span>
                     <p class="font-label-uppercase text-label-uppercase tracking-[0.24em] text-secondary">
-                        THE BENAZIR STORY
+                        THE {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} STORY
                     </p>
                 </div>
 
@@ -24,7 +24,7 @@
                 </h1>
 
                 <p class="mt-7 max-w-xl text-base leading-8 text-on-surface-variant sm:text-lg">
-                    BENAZIR brings the artistry of Pakistan's ateliers into clothing made for modern life.
+                    {{ config('storefront.store_name', 'BENAZIR') }} brings the artistry of Pakistan's ateliers into clothing made for modern life.
                     Our collections celebrate thoughtful detail, expressive colour, and the generations
                     of craft behind every stitch.
                 </p>
@@ -63,7 +63,7 @@
                         <span class="material-symbols-outlined text-5xl text-secondary">spa</span>
 
                         <p class="mt-8 font-display-hero text-4xl tracking-[0.15em] text-primary sm:text-5xl">
-                            BENAZIR
+                            {{ config('storefront.store_name', 'BENAZIR') }}
                         </p>
 
                         <span class="my-5 h-px w-16 bg-secondary"></span>
@@ -121,7 +121,7 @@
     <div class="mx-auto max-w-7xl px-margin py-16 sm:py-20 lg:px-margin-md lg:py-24">
         <div class="mx-auto mb-12 max-w-2xl text-center">
             <p class="font-label-uppercase text-xs tracking-[0.24em] text-secondary">
-                THE BENAZIR DIFFERENCE
+                THE {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} DIFFERENCE
             </p>
 
             <h2 class="mt-4 font-display-hero text-3xl leading-tight text-primary sm:text-4xl lg:text-5xl">
@@ -136,7 +136,7 @@
         <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
             {{-- Value 1 --}}
-            <article class="group rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-7 transition duration-300 hover:-translate-y-1 hover:border-secondary/60 hover:shadow-lg sm:p-8">
+            <article class="reveal reveal-up group rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-7 transition duration-300 hover:-translate-y-1 hover:border-secondary/60 hover:shadow-lg sm:p-8">
                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 transition group-hover:bg-secondary/15">
                     <span class="material-symbols-outlined text-3xl text-secondary">history_edu</span>
                 </div>
@@ -156,7 +156,7 @@
             </article>
 
             {{-- Value 2 --}}
-            <article class="group rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-7 transition duration-300 hover:-translate-y-1 hover:border-secondary/60 hover:shadow-lg sm:p-8">
+            <article class="reveal reveal-up group rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-7 transition duration-300 hover:-translate-y-1 hover:border-secondary/60 hover:shadow-lg sm:p-8">
                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 transition group-hover:bg-secondary/15">
                     <span class="material-symbols-outlined text-3xl text-secondary">draw</span>
                 </div>
@@ -176,7 +176,7 @@
             </article>
 
             {{-- Value 3 --}}
-            <article class="group rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-7 transition duration-300 hover:-translate-y-1 hover:border-secondary/60 hover:shadow-lg sm:col-span-2 sm:p-8 lg:col-span-1">
+            <article class="reveal reveal-up group rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-7 transition duration-300 hover:-translate-y-1 hover:border-secondary/60 hover:shadow-lg sm:col-span-2 sm:p-8 lg:col-span-1">
                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 transition group-hover:bg-secondary/15">
                     <span class="material-symbols-outlined text-3xl text-secondary">styler</span>
                 </div>
@@ -221,7 +221,7 @@
                     </p>
 
                     <p class="mt-4 leading-8 text-on-surface-variant">
-                        BENAZIR embraces that inspiration while looking toward the way women dress
+                        {{ config('storefront.store_name', 'BENAZIR') }} embraces that inspiration while looking toward the way women dress
                         today: with confidence, individuality and a sense of occasion.
                     </p>
 
@@ -245,7 +245,7 @@
 
                 <p class="mt-5 leading-8 text-on-surface-variant">
                     Finding something beautiful should feel just as special as wearing it.
-                    We want your experience with BENAZIR to feel considered, welcoming and
+                    We want your experience with {{ config('storefront.store_name', 'BENAZIR') }} to feel considered, welcoming and
                     easy to navigate, from exploring the collection to choosing the details
                     that suit you.
                 </p>
@@ -302,7 +302,7 @@
             <span class="material-symbols-outlined text-4xl text-secondary">flare</span>
 
             <p class="mt-5 font-label-uppercase text-xs tracking-[0.25em] text-secondary">
-                YOUR BENAZIR STORY STARTS HERE
+                YOUR {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} STORY STARTS HERE
             </p>
 
             <h2 class="mt-5 font-display-hero text-3xl leading-tight text-on-primary sm:text-4xl lg:text-5xl">

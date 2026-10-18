@@ -115,7 +115,7 @@
             <div class="lg:sticky lg:top-8 lg:col-span-5">
                 <div class="border-b border-outline-variant/50 pb-6">
                     <p class="font-label-uppercase text-[10px] tracking-[0.25em] text-secondary sm:text-xs">
-                        BENAZIR COLLECTION
+                        {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} COLLECTION
                     </p>
 
                     <h1 class="mt-4 font-display-hero text-3xl leading-[1.15] tracking-tight text-primary sm:text-4xl lg:text-5xl">
@@ -164,7 +164,7 @@
                     </h2>
 
                     <p class="mt-4 whitespace-pre-line text-sm leading-7 text-on-surface-variant sm:text-base">
-                        {{ $product->description ?: 'Discover the details of this piece from the BENAZIR collection.' }}
+                        {{ $product->description ?: 'Discover the details of this piece from the ' . config('storefront.store_name', 'BENAZIR') . ' collection.' }}
                     </p>
 
                     @if ($product->fabric)
@@ -343,7 +343,7 @@
                             You may also like
                         </h2>
                         <p class="mt-3 text-sm leading-6 text-on-surface-variant">
-                            Discover more pieces from the BENAZIR collection.
+                            Discover more pieces from the {{ config('storefront.store_name', 'BENAZIR') }} collection.
                         </p>
                     </div>
 

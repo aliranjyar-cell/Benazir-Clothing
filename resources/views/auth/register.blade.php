@@ -12,7 +12,7 @@
 
             <section
                 class="mt-space-lg border border-outline-variant/70 bg-surface-container-lowest p-space-lg sm:p-space-xl">
-                <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">BENAZIR customer account
+                <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">{{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} customer account
                 </p>
                 <h1 class="mt-space-sm font-display-hero text-3xl text-primary">Create your account</h1>
                 <p class="mt-space-sm font-body-md text-body-md text-on-surface-variant">Save your details and keep your

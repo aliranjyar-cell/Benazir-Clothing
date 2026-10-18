@@ -48,6 +48,28 @@ class RegisteredUserController extends Controller
         Auth::guard('web')->login($user);
         $request->session()->regenerate();
 
+        return $this->customerRedirect($request);
+    }
+
+    /**
+     * Send a freshly registered customer to their account area.
+     *
+     * The session's "url.intended" key is shared with the admin panel's
+     * auth guard, so a stale admin URL (e.g. /dashboard, stored when an
+     * unauthenticated visitor was bounced from the admin area) must not
+     * hijack this redirect — only storefront /account URLs are honored.
+     */
+    private function customerRedirect(Request $request): RedirectResponse
+    {
+        $intended = $request->session()->get('url.intended');
+        $path = $intended ? parse_url($intended, PHP_URL_PATH) : null;
+
+        if ($path === null || ! str_starts_with($path, '/account')) {
+            $request->session()->forget('url.intended');
+
+            return redirect()->route('store.account');
+        }
+
         return redirect()->intended(route('store.account', absolute: false));
     }
 }

@@ -7,7 +7,7 @@
         <div class="max-w-7xl mx-auto px-margin lg:px-margin-md py-space-xl">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
                 <div>
-                    <p class="font-label-uppercase text-label-uppercase tracking-widest text-primary">AURELLE · ATELIER</p>
+                    <p class="font-label-uppercase text-label-uppercase tracking-widest text-primary">{{ strtoupper(config('storefront.store_name', 'AURELLE')) }} · ATELIER</p>
                     <h1 class="font-display-hero font-headline-lg text-headline-lg text-primary mt-space-xs leading-[1.15]">
                         {{ $selectedCategory ? 'Shop · ' . $selectedCategory->name : 'Shop' }}
                     </h1>

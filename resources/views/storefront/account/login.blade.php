@@ -12,7 +12,7 @@
 
             <section
                 class="mt-space-lg border border-outline-variant/70 bg-surface-container-lowest p-space-lg sm:p-space-xl">
-                <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">BENAZIR customer account
+                <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">{{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} customer account
                 </p>
                 <h1 class="mt-space-sm font-display-hero text-3xl text-primary">Welcome back</h1>
                 <p class="mt-space-sm font-body-md text-body-md text-on-surface-variant">Sign in to view your details and
@@ -68,7 +68,7 @@
 
                 <p
                     class="mt-space-lg border-t border-outline-variant/50 pt-space-md font-body-sm text-body-sm text-on-surface-variant">
-                    New to BENAZIR?
+                    New to {{ config('storefront.store_name', 'BENAZIR') }}?
                     <a href="{{ route('register') }}" class="font-semibold text-primary underline underline-offset-4">Create
                         an account</a>
                 </p>

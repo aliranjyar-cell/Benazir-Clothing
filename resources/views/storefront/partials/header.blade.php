@@ -37,10 +37,15 @@
                     </form>
                 </div>
                 <div class="flex-1 text-center"><a class="inline-flex flex-col items-center group" data-path="home"
-                        href="{{ route('store.home') }}"><span
-                            class="font-headline-lg text-headline-lg tracking-widest text-primary font-medium uppercase font-display-hero">Benazir</span><span
-                            class="font-label-uppercase text-label-uppercase tracking-[0.25em] text-secondary -mt-1 uppercase">Lahore
-                            • London • New York</span></a></div>
+                        href="{{ route('store.home') }}">
+                        @if (config('storefront.store_logo'))
+                            <img src="{{ asset('storage/' . config('storefront.store_logo')) }}"
+                                alt="{{ config('storefront.store_name', 'Benazir') }}"
+                                class="mx-auto mb-1 h-10 w-auto object-contain sm:h-12" />
+                        @endif
+                        <span
+                            class="font-headline-lg text-headline-lg tracking-widest text-primary font-medium uppercase font-display-hero">{{ config('storefront.store_name', 'Benazir') }}</span><span
+                            class="font-label-uppercase text-label-uppercase tracking-[0.25em] text-secondary -mt-1 uppercase">{{ config('storefront.store_tagline', 'Lahore • London • New York') }}</span></a></div>
                 <div class="flex-1 flex items-center justify-end gap-space-md"><a aria-label="Wishlist"
                         class="relative text-on-surface-variant hover:text-primary transition-colors p-1"
                         data-path="wishlist" href="{{ route('store.wishlist.index') }}"><span

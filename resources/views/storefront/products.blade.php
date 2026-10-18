@@ -21,7 +21,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end border-b border-outline-variant/40 pb-8">
                     <div class="lg:col-span-8 space-y-3">
                         <div class="flex items-center space-x-3">
-                            <span class="text-primary font-label-sm text-label-sm tracking-[0.25em] uppercase">The Benazir
+                            <span class="text-primary font-label-sm text-label-sm tracking-[0.25em] uppercase">The {{ config('storefront.store_name', 'Benazir') }}
                                 Collection</span>
                             <span class="w-12 h-px bg-primary/40"></span>
                         </div>
@@ -48,7 +48,7 @@
                 <div
                     class="relative w-full overflow-hidden bg-surface-container-low border border-outline-variant/60 shadow-sm">
                     <div class="relative h-[240px] md:h-[320px] lg:h-[380px] w-full">
-                        <img alt="BENAZIR Haute Couture Lookbook 2025"
+                        <img alt="{{ config('storefront.store_name', 'BENAZIR') }} Haute Couture Lookbook 2025"
                             class="w-full h-full object-cover object-center filter saturate-[0.9] hover:scale-[1.01] transition-transform duration-700"
                             src="{{ asset('images/pexels-dhanno-27603274.webp') }}" />
                         <div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-on-surface/20 to-transparent">

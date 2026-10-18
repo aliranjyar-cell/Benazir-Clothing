@@ -1,7 +1,7 @@
 
 @extends('storefront.layouts.store')
 
-@section('title', 'Contact Us | BENAZIR')
+@section('title', 'Contact Us | ' . config('storefront.store_name', 'BENAZIR'))
 
 @section('content')
 <section class="relative overflow-hidden bg-background">
@@ -19,7 +19,7 @@
                     <div class="mb-6 inline-flex items-center gap-3">
                         <span class="h-px w-10 bg-secondary"></span>
                         <span class="font-label-uppercase text-label-uppercase tracking-[0.25em] text-secondary">
-                            THE BENAZIR ATELIER
+                            THE {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} ATELIER
                         </span>
                     </div>
 
@@ -56,7 +56,7 @@
 
                         <div class="my-8">
                             <p class="font-display-hero text-4xl tracking-[0.16em] text-primary sm:text-5xl">
-                                BENAZIR
+                                {{ config('storefront.store_name', 'BENAZIR') }}
                             </p>
                             <p class="mt-3 text-xs font-medium uppercase tracking-[0.3em] text-secondary">
                                 Lahore · London · New York
@@ -374,7 +374,7 @@
         <div class="mx-auto max-w-7xl px-margin py-12 text-center lg:px-margin-md lg:py-16">
             <span class="material-symbols-outlined text-3xl text-secondary">auto_awesome</span>
             <p class="mt-4 font-display-hero text-2xl leading-snug text-primary sm:text-3xl">
-                Thank you for being part of the BENAZIR story.
+                Thank you for being part of the {{ config('storefront.store_name', 'BENAZIR') }} story.
             </p>
             <p class="mt-3 text-sm text-on-surface-variant">
                 Lahore · London · New York

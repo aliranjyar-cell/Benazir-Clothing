@@ -6,7 +6,7 @@
                 @if (isset($title))
                     {{ $title }}
                 @else
-                    Welcome to AURELLE
+                    Welcome to {{ config('storefront.store_name', 'AURELLE') }}
                 @endif
             </h1>
             @if (isset($description))

@@ -84,7 +84,7 @@
             {{-- CATEGORY / PRODUCT COLLECTION --}}
             <span class="block text-[10px] font-medium uppercase tracking-[0.14em] text-secondary">
 
-                {{ $product->category?->name ?? 'BENAZIR Collection' }}
+                {{ $product->category?->name ?? config('storefront.store_name', 'BENAZIR') . ' Collection' }}
             </span>
 
             {{-- PRODUCT NAME --}}

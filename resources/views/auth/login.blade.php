@@ -8,7 +8,7 @@
 
             {{-- LEFT COLUMN: MINIMAL ADMIN BRANDING --}}
 
-            {{-- LEFT COLUMN: BENAZIR CLOTHING BRAND PANEL --}}
+            {{-- LEFT COLUMN: STORE BRAND PANEL --}}
             <section
                 class="relative hidden lg:flex lg:w-[54%] lg:min-h-screen flex-col justify-between overflow-hidden bg-[#28152F] px-10 py-10 xl:px-14 xl:py-12 text-white"
                 style="background-image: linear-gradient(rgba(40, 21, 47, 0.30), rgba(40, 21, 47, 0.30)), url('{{ asset('images/Burgundy Silk with Botanical Embroidery.png') }}'); background-size: cover; background-position: center;">
@@ -46,7 +46,7 @@
 
                     <div>
                         <h1 class="text-sm font-semibold tracking-[0.22em] text-[#F8F3E9]">
-                            BENAZIR CLOTHING
+                            {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} CLOTHING
                         </h1>
                         <p class="mt-1 text-[10px] tracking-[0.25em] text-[#D6B875]">
                             ADMINISTRATION
@@ -85,7 +85,7 @@
                         </div>
 
                         <span class="text-xs text-white/50">
-                            &copy; {{ date('Y') }} Benazir Clothing
+                            &copy; {{ date('Y') }} {{ config('storefront.store_name', 'Benazir Clothing') }}
                         </span>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                     <div class="lg:hidden flex items-center space-x-2">
                         <span class="font-serif text-xl text-[#651E32] font-bold">C</span>
                         <span class="font-serif tracking-widest text-[#651E32] font-bold text-sm uppercase">
-                            BENAZIR CLOTHING
+                            {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} CLOTHING
                         </span>
                     </div>
 
@@ -295,7 +295,7 @@
                 {{-- Footer --}}
                 <footer class="w-full text-center relative z-10 pt-6 lg:pt-0">
                     <p class="text-xs text-[#867F81] font-light">
-                        © {{ date('Y') }} BENAZIRCLOTHING. All rights reserved.
+                        © {{ date('Y') }} {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }}. All rights reserved.
                     </p>
                 </footer>
             </section>

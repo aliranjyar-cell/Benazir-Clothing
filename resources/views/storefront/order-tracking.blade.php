@@ -1,6 +1,6 @@
 @extends('storefront.layouts.store')
 
-@section('title', 'Track Your Order | BENAZIR')
+@section('title', 'Track Your Order | ' . config('storefront.store_name', 'BENAZIR'))
 
 @section('content')
     @php
@@ -38,7 +38,7 @@
                     <div class="mb-5 flex items-center gap-3">
                         <span class="h-px w-9 bg-secondary"></span>
                         <p class="font-label-uppercase text-xs tracking-[0.24em] text-secondary">
-                            BENAZIR CUSTOMER CARE
+                            {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} CUSTOMER CARE
                         </p>
                     </div>
 
@@ -77,7 +77,7 @@
                 <div class="mx-auto grid max-w-5xl items-start gap-8 lg:grid-cols-[1fr_0.75fr] lg:gap-12">
 
                     <section
-                        class="rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-sm sm:p-9 lg:p-10">
+                        class="reveal reveal-up rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-sm sm:p-9 lg:p-10">
                         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10">
                             <span class="material-symbols-outlined text-3xl text-secondary">package_2</span>
                         </div>
@@ -120,7 +120,7 @@
 
                             <p id="tracking-help" class="mt-3 text-xs leading-6 text-on-surface-variant">
                                 Your tracking code provides access to your order summary.
-                                Keep it private and only use it on the official BENAZIR website.
+                                Keep it private and only use it on the official {{ config('storefront.store_name', 'BENAZIR') }} website.
                             </p>
 
                             <button type="submit"
@@ -145,11 +145,12 @@
 
                     {{-- Supporting panel --}}
                     <aside class="space-y-5">
-                        <div class="overflow-hidden rounded-2xl bg-primary p-7 text-on-primary sm:p-9">
+                        <div class="reveal reveal-up overflow-hidden rounded-2xl bg-primary p-7 text-on-primary sm:p-9"
+                            style="transition-delay: 90ms">
                             <span class="material-symbols-outlined text-4xl text-secondary">redeem</span>
 
                             <p class="mt-7 font-label-uppercase text-xs tracking-[0.22em] text-secondary">
-                                THE BENAZIR EXPERIENCE
+                                THE {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }} EXPERIENCE
                             </p>
 
                             <h2 class="mt-3 font-display-hero text-3xl leading-tight sm:text-4xl">
@@ -157,7 +158,7 @@
                             </h2>
 
                             <p class="mt-4 text-sm leading-7 text-on-primary/75">
-                                Your order is part of your BENAZIR story. We want every step,
+                                Your order is part of your {{ config('storefront.store_name', 'BENAZIR') }} story. We want every step,
                                 from browsing our collection to receiving your pieces, to feel considered.
                             </p>
 
@@ -168,7 +169,8 @@
                             </div>
                         </div>
 
-                        <div class="rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-6">
+                        <div class="reveal reveal-up rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-6"
+                            style="transition-delay: 180ms">
                             <h3 class="font-display-hero text-xl text-primary">How tracking works</h3>
 
                             <div class="mt-6 space-y-5">
@@ -339,7 +341,8 @@
 
                             <div class="mt-6 divide-y divide-outline-variant/50">
                                 @forelse ($order->items as $item)
-                                    <article class="flex gap-4 py-5 first:pt-0 last:pb-0 sm:gap-5">
+                                    <article class="reveal reveal-up flex gap-4 py-5 first:pt-0 last:pb-0 sm:gap-5"
+                                        style="transition-delay: {{ ($loop->index % 4) * 90 }}ms">
                                         <div
                                             class="flex h-20 w-16 shrink-0 items-center justify-center rounded-lg border border-outline-variant/50 bg-surface-container-low sm:h-24 sm:w-20">
                                             <span
@@ -463,7 +466,7 @@
                                 </h3>
                             </div>
 
-                            <div class="mt-6 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-5">
+                            <div class="reveal reveal-up mt-6 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-5">
                                 <div class="flex items-start gap-3">
                                     <span class="material-symbols-outlined text-xl text-secondary">location_on</span>
                                     <div class="min-w-0">
@@ -483,7 +486,8 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-5">
+                            <div class="reveal reveal-up mt-4 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-5"
+                                style="transition-delay: 90ms">
                                 <div class="flex items-start gap-3">
                                     <span class="material-symbols-outlined text-xl text-secondary">payments</span>
                                     <div class="min-w-0">
@@ -500,7 +504,8 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 rounded-xl bg-primary p-5 text-on-primary">
+                            <div class="reveal reveal-up mt-4 rounded-xl bg-primary p-5 text-on-primary"
+                                style="transition-delay: 180ms">
                                 <p class="text-xs uppercase tracking-[0.18em] text-on-primary/70">
                                     Order reference
                                 </p>
@@ -520,7 +525,7 @@
                                     We're here to help.
                                 </h4>
                                 <p class="mt-3 text-sm leading-6 text-on-surface-variant">
-                                    Have a question about your delivery or order status? Get in touch with BENAZIR.
+                                    Have a question about your delivery or order status? Get in touch with {{ config('storefront.store_name', 'BENAZIR') }}.
                                 </p>
 
                                 <a href="{{ url('/contact') }}"

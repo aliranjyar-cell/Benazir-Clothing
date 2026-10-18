@@ -17,7 +17,11 @@
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
 
-    <title>@yield('title', 'Benazir Clothes · Punjabi Couture')</title>
+    <title>@yield('title', config('storefront.store_name', 'Benazir Clothes') . ' · ' . config('storefront.store_tagline', 'Punjabi Couture'))</title>
+
+    @if (config('storefront.store_favicon'))
+        <link rel="icon" href="{{ asset('storage/' . config('storefront.store_favicon')) }}" />
+    @endif
 
     <style>
         @layer base {
@@ -72,6 +76,46 @@
 
         ::-webkit-scrollbar {
             display: none;
+        }
+
+
+        /* Initial hidden state */
+        .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition:
+                opacity 700ms ease,
+                transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
+        }
+
+        /* Animation directions */
+        .reveal-left {
+            transform: translateX(-40px);
+        }
+
+        .reveal-right {
+            transform: translateX(40px);
+        }
+
+        .reveal-up {
+            transform: translateY(32px);
+        }
+
+        /* Visible state */
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        /* Respect reduced-motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+                will-change: auto;
+            }
         }
     </style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])

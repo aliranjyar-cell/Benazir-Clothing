@@ -12,7 +12,7 @@
         <div class="max-w-7xl mx-auto px-margin lg:px-margin-md py-space-xl">
             <div class="flex flex-col gap-space-xl lg:flex-row">
                 <aside class="lg:w-60 lg:shrink-0">
-                    <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">BENAZIR</p>
+                    <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">{{ strtoupper(config('storefront.store_name', 'BENAZIR')) }}</p>
                     <h1 class="mt-space-xs font-display-hero text-headline-lg text-primary">My Account</h1>
                     <nav aria-label="Account navigation" class="mt-space-md grid gap-1">
                         @foreach ([['dashboard', 'My Account', 'store.account'], ['profile', 'My Profile', 'store.account.profile'], ['orders', 'My Orders', 'store.account.orders']] as [$key, $label, $route])

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $notificationType === 'new_order' ? 'New order' : 'Order update' }} | BENAZIR</title>
+    <title>{{ $notificationType === 'new_order' ? 'New order' : 'Order update' }} | {{ config('storefront.store_name', 'BENAZIR') }}</title>
 </head>
 
 <body style="margin:0; padding:0; background:#f5f2ed; color:#282522; font-family:Georgia, 'Times New Roman', serif;">
@@ -29,7 +29,7 @@
                         <td style="padding:34px 36px 24px; text-align:center; border-bottom:1px solid #e8e3dc;">
                             <p
                                 style="margin:0; color:#7a263a; font:600 13px/1.4 Arial, sans-serif; letter-spacing:3px;">
-                                BENAZIR</p>
+                                {{ strtoupper(config('storefront.store_name', 'BENAZIR')) }}</p>
                             <p
                                 style="margin:8px 0 0; color:#817a72; font:11px/1.5 Arial, sans-serif; letter-spacing:1.5px; text-transform:uppercase;">
                                 Punjabi Couture</p>
@@ -59,7 +59,7 @@
                                 @elseif ($notificationType === 'delivered')
                                     Thank you, {{ $order->customer_name }}. Your order has been marked as delivered.
                                 @elseif ($notificationType === 'cancelled')
-                                    {{ $order->customer_name }}, your order has been cancelled. Please contact BENAZIR
+                                    {{ $order->customer_name }}, your order has been cancelled. Please contact {{ config('storefront.store_name', 'BENAZIR') }}
                                     if you have questions.
                                 @endif
                             </p>
@@ -166,7 +166,7 @@
                         <td
                             style="padding:20px 36px; background:#f8f6f3; color:#817a72; text-align:center; font:11px/1.7 Arial, sans-serif;">
                             With care,<br><strong
-                                style="color:#7a263a; font-weight:600; letter-spacing:1px;">BENAZIR</strong>
+                                style="color:#7a263a; font-weight:600; letter-spacing:1px;">{{ strtoupper(config('storefront.store_name', 'BENAZIR')) }}</strong>
                         </td>
                     </tr>
                 </table>

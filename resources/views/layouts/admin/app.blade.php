@@ -48,7 +48,7 @@
 
                 <footer class="border-t border-black/5 bg-white/60 px-4 py-5 sm:px-6 lg:px-8">
                     <p class="text-xs text-muted">
-                        © {{ date('Y') }} AURELLE — Fashion Operations · admin layout preview
+                        © {{ date('Y') }} {{ config('storefront.store_name', 'AURELLE') }} — Fashion Operations · admin layout preview
                     </p>
                 </footer>
             </div>

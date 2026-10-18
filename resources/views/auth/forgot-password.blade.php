@@ -13,7 +13,7 @@
                 <p class="font-label-uppercase text-label-uppercase tracking-widest text-secondary">Customer account</p>
                 <h1 class="mt-space-sm font-display-hero text-3xl text-primary">Reset your password</h1>
                 <p class="mt-space-sm font-body-md text-body-md text-on-surface-variant">Enter the email address associated
-                    with your BENAZIR account.</p>
+                    with your {{ config('storefront.store_name', 'BENAZIR') }} account.</p>
 
                 @if (session('status'))
                     <div class="mt-space-md border border-secondary/40 bg-secondary-container/30 px-space-md py-space-sm font-body-sm text-body-sm text-on-surface"

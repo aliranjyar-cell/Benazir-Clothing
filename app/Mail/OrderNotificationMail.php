@@ -21,14 +21,16 @@ class OrderNotificationMail extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
+        $name = config('storefront.store_name', 'BENAZIR');
+
         $subject = match ($this->notificationType) {
-            'new_order' => "New BENAZIR order: {$this->order->order_number}",
-            'placed' => "We received your BENAZIR order {$this->order->order_number}",
-            'confirmed' => 'Your BENAZIR order is confirmed',
-            'shipped' => 'Your BENAZIR order has shipped',
-            'delivered' => 'Your BENAZIR order has been delivered',
-            'cancelled' => 'Your BENAZIR order has been cancelled',
-            default => "Update on BENAZIR order {$this->order->order_number}",
+            'new_order' => "New {$name} order: {$this->order->order_number}",
+            'placed' => "We received your {$name} order {$this->order->order_number}",
+            'confirmed' => "Your {$name} order is confirmed",
+            'shipped' => "Your {$name} order has shipped",
+            'delivered' => "Your {$name} order has been delivered",
+            'cancelled' => "Your {$name} order has been cancelled",
+            default => "Update on {$name} order {$this->order->order_number}",
         };
 
         return new Envelope(subject: $subject);
