@@ -1,12 +1,16 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
+use App\Models\Notification;
 use App\Models\Setting;
 use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class SettingController extends Controller
@@ -63,8 +67,8 @@ class SettingController extends Controller
             'title' => 'Orders & Notifications',
             'description' => 'Order statuses, email alerts and customer updates.',
             'icon' => 'bell',
-            'route' => 'admin.settings.section',
-            'status' => 'soon',
+            'route' => 'admin.settings.orders-notifications',
+            'status' => 'ready',
         ],
         [
             'key' => 'policies-support',
@@ -77,10 +81,10 @@ class SettingController extends Controller
         [
             'key' => 'account-security',
             'title' => 'Account & Security',
-            'description' => 'Admin passwords, sessions, roles and two-factor auth.',
+            'description' => 'Change your admin password and review your account details.',
             'icon' => 'key',
-            'route' => 'admin.settings.section',
-            'status' => 'soon',
+            'route' => 'admin.settings.account-security',
+            'status' => 'ready',
         ],
     ];
 
@@ -268,6 +272,91 @@ class SettingController extends Controller
         return redirect()
             ->route('admin.settings.products')
             ->with('success', 'Products & inventory settings saved.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Account & Security
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Show the Account & Security settings: the signed-in admin's account
+     * details plus the change-password form.
+     */
+    public function accountSecurity(): View
+    {
+        return view('admin.settings.account-security', [
+            'admin' => auth()->guard('admin')->user(),
+            'sections' => self::SECTIONS,
+        ]);
+    }
+
+    /**
+     * Change the signed-in admin's password.
+     */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'different:current_password'],
+        ]);
+
+        $admin = auth()->guard('admin')->user();
+
+        if (! Hash::check($data['current_password'], $admin->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => 'The current password you entered is incorrect.',
+            ]);
+        }
+
+        $admin->update([
+            'password' => Hash::make($data['password']),
+        ]);
+
+        return redirect()
+            ->route('admin.settings.account-security')
+            ->with('success', 'Your password has been changed.');
+    }
+
+    /*--------------------------------------------------------------------------
+    | Orders & Notifications
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Show the signed-in admin's order notifications (new-order alerts).
+     */
+    public function ordersNotifications(): View
+    {
+        $admin = auth()->guard('admin')->user();
+
+        $notifications = $admin->notifications()
+            ->paginate(15);
+
+        return view('admin.settings.orders-notifications', [
+            'admin' => $admin,
+            'notifications' => $notifications,
+            'sections' => self::SECTIONS,
+        ]);
+    }
+
+    /**
+     * Mark a single notification as read.
+     */
+    public function markNotificationRead(Request $request, Notification $notification): RedirectResponse
+    {
+        $admin = auth()->guard('admin')->user();
+
+        abort_unless(
+            $notification->notifiable_type === Admin::class
+                && $notification->notifiable_id === $admin->id,
+            403
+        );
+
+        $notification->markAsRead();
+
+        return back()->with('success', 'Notification marked as read.');
     }
 
     /*

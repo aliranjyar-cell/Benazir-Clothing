@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Mail\OrderNotificationMail;
+use App\Models\Admin;
+use App\Models\Notification;
 use App\Models\Order;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -17,6 +19,29 @@ class OrderNotificationService
 
         if (is_string($adminEmail) && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
             $this->queueTo($adminEmail, $order, 'new_order');
+        }
+
+        $this->notifyAdmins($order);
+    }
+
+    /**
+     * Post one in-app notification to every active admin so the new order
+     * surfaces in the Admin → Settings → Orders & Notifications panel.
+     */
+    private function notifyAdmins(Order $order): void
+    {
+        foreach (Admin::where('status', 'active')->get() as $admin) {
+            $admin->notifications()->create([
+                'type' => 'new_order',
+                'data' => [
+                    'order_id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'customer_name' => $order->customer_name,
+                    'customer_email' => $order->customer_email,
+                    'grand_total' => (float) $order->grand_total,
+                    'currency' => $order->currency,
+                ],
+            ]);
         }
     }
 

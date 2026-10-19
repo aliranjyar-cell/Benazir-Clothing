@@ -108,6 +108,7 @@
                         <div class="my-3 border-t border-outline-variant/30"></div>
 
                         <a href="{{ route('store.about') }}"
+                        
                             class="block px-3 py-2.5 text-sm text-on-surface hover:text-primary">
                             About Us
                         </a>

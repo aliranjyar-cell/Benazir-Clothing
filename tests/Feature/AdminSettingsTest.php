@@ -1,10 +1,13 @@
 <?php
 namespace Tests\Feature;
 use App\Models\Admin;
+use App\Models\Notification;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Providers\AppServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -55,7 +58,7 @@ class AdminSettingsTest extends TestCase
         $admin = $this->makeAdmin();
 
         $this->actingAs($admin)
-            ->get(route('admin.settings.section', 'orders-notifications'))
+            ->get(route('admin.settings.section', 'storefront-branding'))
             ->assertOk()
             ->assertSee('Coming soon', false);
 
@@ -346,6 +349,180 @@ class AdminSettingsTest extends TestCase
 
     /*
     |--------------------------------------------------------------------------
+    | Account & Security
+    |--------------------------------------------------------------------------
+    */
+
+    public function test_account_security_page_renders(): void
+    {
+        $this->actingAs($this->makeAdmin())
+            ->get(route('admin.settings.account-security'))
+            ->assertOk()
+            ->assertSee('Account & Security')
+            ->assertSee('Change password', false)
+            ->assertSee('Simran', false)
+            ->assertSee('simran@example.com', false);
+    }
+
+    public function test_admin_can_change_password(): void
+    {
+        $admin = $this->makeAdmin();
+
+        $this->actingAs($admin)
+            ->post(route('admin.settings.account-security.password'), [
+                'current_password' => 'password',
+                'password' => 'NewSecret123',
+                'password_confirmation' => 'NewSecret123',
+            ])
+            ->assertRedirect(route('admin.settings.account-security'))
+            ->assertSessionHas('success');
+
+        $this->assertTrue(Hash::check('NewSecret123', Admin::find($admin->id)->password));
+        $this->assertFalse(Hash::check('password', Admin::find($admin->id)->password));
+    }
+
+    public function test_password_change_rejects_wrong_current_password(): void
+    {
+        $this->actingAs($this->makeAdmin())
+            ->from(route('admin.settings.account-security'))
+            ->post(route('admin.settings.account-security.password'), [
+                'current_password' => 'wrong-password',
+                'password' => 'NewSecret123',
+                'password_confirmation' => 'NewSecret123',
+            ])
+            ->assertSessionHasErrors('current_password');
+    }
+
+    public function test_password_change_requires_confirmation(): void
+    {
+        $this->actingAs($this->makeAdmin())
+            ->from(route('admin.settings.account-security'))
+            ->post(route('admin.settings.account-security.password'), [
+                'current_password' => 'password',
+                'password' => 'NewSecret123',
+            ])
+            ->assertSessionHasErrors('password');
+    }
+
+    public function test_password_change_rejects_reusing_current_password(): void
+    {
+        $this->actingAs($this->makeAdmin())
+            ->from(route('admin.settings.account-security'))
+            ->post(route('admin.settings.account-security.password'), [
+                'current_password' => 'password',
+                'password' => 'password',
+                'password_confirmation' => 'password',
+            ])
+            ->assertSessionHasErrors('password');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Orders & Notifications
+    |--------------------------------------------------------------------------
+    */
+
+    public function test_orders_notifications_page_renders(): void
+    {
+        $admin = $this->makeAdmin();
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.orders-notifications'))
+            ->assertOk()
+            ->assertSee('Orders & Notifications')
+            ->assertSee($admin->first_name, false)
+            ->assertSee($admin->email, false);
+    }
+
+    public function test_placing_an_order_creates_a_notification_for_each_active_admin(): void
+    {
+        $admin = $this->makeAdmin();
+        $variant = $this->makeVariant(['price' => '1299.95', 'stock_quantity' => 4]);
+        $checkoutToken = $this->startCheckout($variant, 1);
+
+        $this->post(route('store.checkout.place'), $this->checkoutData([
+            'checkout_token' => $checkoutToken,
+            'payment_method' => 'cash_on_delivery',
+            'unit_price' => '1299.95',
+            'subtotal' => '1299.95',
+            'discount_total' => '0',
+            'grand_total' => '1299.95',
+        ]))->assertRedirect();
+
+        $order = Order::query()->firstOrFail();
+
+        $this->assertDatabaseHas('notifications', [
+            'type' => 'new_order',
+            'notifiable_type' => Admin::class,
+            'notifiable_id' => $admin->id,
+        ]);
+
+        $notification = Notification::where('notifiable_id', $admin->id)
+            ->where('data->order_number', $order->order_number)
+            ->first();
+
+        $this->assertNotNull($notification);
+        $this->assertNull($notification->read_at);
+        $this->assertSame((float) $order->grand_total, $notification->data['grand_total']);
+    }
+
+    public function test_notification_can_be_marked_as_read(): void
+    {
+        $admin = $this->makeAdmin();
+        $notification = Notification::create([
+            'type' => 'new_order',
+            'notifiable_type' => Admin::class,
+            'notifiable_id' => $admin->id,
+            'data' => ['order_number' => 'BNZ-0001'],
+        ]);
+
+        $this->assertNull($notification->read_at);
+
+        $this->actingAs($admin)
+            ->post(route('admin.settings.orders-notifications.read', $notification))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertNotNull($notification->fresh()->read_at);
+    }
+
+    public function test_inactive_admin_does_not_receive_order_notifications(): void
+    {
+        $activeAdmin = $this->makeAdmin();
+        Admin::create([
+            'first_name' => 'Inactive',
+            'last_name' => 'Admin',
+            'username' => 'inactive',
+            'email' => 'inactive@example.com',
+            'password' => 'password',
+            'role' => 'admin',
+            'status' => 'inactive',
+        ]);
+
+        $variant = $this->makeVariant(['price' => '1299.95', 'stock_quantity' => 4]);
+        $checkoutToken = $this->startCheckout($variant, 1);
+
+        $this->post(route('store.checkout.place'), $this->checkoutData([
+            'checkout_token' => $checkoutToken,
+            'payment_method' => 'cash_on_delivery',
+            'unit_price' => '1299.95',
+            'subtotal' => '1299.95',
+            'discount_total' => '0',
+            'grand_total' => '1299.95',
+        ]))->assertRedirect();
+
+        $this->assertDatabaseHas('notifications', [
+            'type' => 'new_order',
+            'notifiable_id' => $activeAdmin->id,
+        ]);
+        $this->assertDatabaseMissing('notifications', [
+            'type' => 'new_order',
+            'notifiable_id' => Admin::where('status', 'inactive')->first()->id,
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | Helpers
     |--------------------------------------------------------------------------
     */
@@ -386,5 +563,34 @@ class AdminSettingsTest extends TestCase
             'role' => 'superadmin',
             'status' => 'active',
         ]);
+    }
+
+    private function startCheckout(ProductVariant $variant, int $quantity): string
+    {
+        $this->withSession(['cart' => [$variant->id => $quantity]]);
+
+        $response = $this->get(route('store.checkout.index'));
+        $response->assertOk();
+
+        preg_match('/name="checkout_token" value="([^"]+)"/', $response->getContent(), $matches);
+
+        $this->assertNotEmpty($matches[1] ?? null);
+
+        return $matches[1];
+    }
+
+    private function checkoutData(array $overrides = []): array
+    {
+        return array_merge([
+            'customer_name' => 'Simran Kaur',
+            'customer_email' => 'simran@example.com',
+            'customer_phone' => '+923001234567',
+            'shipping_address_line_1' => '12 Garden Town',
+            'shipping_city' => 'Lahore',
+            'shipping_state' => 'Punjab',
+            'shipping_postal_code' => '54000',
+            'shipping_country' => 'Pakistan',
+            'payment_method' => 'cash_on_delivery',
+        ], $overrides);
     }
 }

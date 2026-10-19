@@ -160,9 +160,19 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('/settings/checkout', [SettingController::class, 'updateCheckout'])
         ->name('admin.settings.checkout.update');
 
+    Route::get('/settings/account-security', [SettingController::class, 'accountSecurity'])
+        ->name('admin.settings.account-security');
+    Route::post('/settings/account-security/password', [SettingController::class, 'updatePassword'])
+        ->name('admin.settings.account-security.password');
+
+    Route::get('/settings/orders-notifications', [SettingController::class, 'ordersNotifications'])
+        ->name('admin.settings.orders-notifications');
+    Route::post('/settings/orders-notifications/{notification}/read', [SettingController::class, 'markNotificationRead'])
+        ->name('admin.settings.orders-notifications.read');
+
     // Sections listed on the overview but not implemented yet → roadmap page.
     Route::get('/settings/{section}', [SettingController::class, 'section'])
-        ->where('section', 'storefront-branding|orders-notifications|policies-support|account-security')
+        ->where('section', 'storefront-branding|policies-support')
         ->name('admin.settings.section');
 
 
