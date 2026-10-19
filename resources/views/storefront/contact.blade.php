@@ -306,9 +306,9 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="font-medium">Email us</p>
-                                <a href="mailto:care@benazir.example"
+                                <a href="mailto:{{ config('storefront.contact.email', 'care@benazir.example') }}"
                                     class="mt-1 inline-block break-all text-sm text-on-primary/75 transition hover:text-white">
-                                    care@benazir.example
+                                    {{ config('storefront.contact.email', 'care@benazir.example') }}
                                 </a>
                             </div>
                         </div>
@@ -326,11 +326,10 @@
                                 OUR STUDIO
                             </p>
                             <h3 class="mt-2 font-display-hero text-2xl text-primary">
-                                Lahore, Pakistan
+                                {{ config('storefront.contact.address', 'Lahore, Pakistan') }}
                             </h3>
                             <p class="mt-3 text-sm leading-7 text-on-surface-variant">
-                                12-B, The Mall<br>
-                                Lahore, Pakistan
+                                {{ config('storefront.contact.address', 'Lahore, Pakistan') }}
                             </p>
                         </div>
                     </div>
@@ -338,9 +337,9 @@
                     <div class="mt-6 border-t border-outline-variant/50 pt-5">
                         <div class="flex items-center justify-between gap-4">
                             <span class="text-sm text-on-surface-variant">Phone</span>
-                            <a href="tel:+923000000000"
+                            <a href="tel:{{ config('storefront.contact.phone', '+923000000000') }}"
                                 class="text-sm font-medium text-primary hover:text-secondary">
-                                +92 300 0000000
+                                {{ config('storefront.contact.phone', '+92 300 0000000') }}
                             </a>
                         </div>
                     </div>
