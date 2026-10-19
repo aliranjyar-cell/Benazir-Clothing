@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Storefront\CustomerAuthController;
 use App\Http\Controllers\Storefront\WishlistController;
 use App\Http\Controllers\Storefront\OrderController as StorefrontOrderController;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Setting;
@@ -29,16 +31,41 @@ Route::get('/', HomeController::class)->name('store.home');
 Route::get('/dashboard', function () {
     $lowStockThreshold = max(1, (int) Setting::get('low_stock_threshold', 5));
 
+    $salesChart = collect(range(5, 0))->map(function ($offset) {
+        $month = now()->copy()->subMonths($offset)->startOfMonth();
+
+        return [
+            'label' => $month->translatedFormat('M'),
+            'value' => (float) Order::query()
+                ->whereMonth('created_at', $month->month)
+                ->whereYear('created_at', $month->year)
+                ->where('payment_status', Order::PAYMENT_PAID)
+                ->sum('grand_total'),
+        ];
+    });
+
+    $recentOrders = Order::query()
+        ->latest()
+        ->take(5)
+        ->get();
+
     return view('admin.dashboard', [
         'stats' => [
             'products' => Product::query()->count(),
             'categories' => Category::query()->count(),
             'variants' => ProductVariant::query()->count(),
+            'orders' => Order::query()->count(),
+            'revenue' => (float) Order::query()
+                ->where('payment_status', Order::PAYMENT_PAID)
+                ->sum('grand_total'),
+            'pending' => Order::query()->where('status', Order::STATUS_PENDING)->count(),
             'lowStock' => ProductVariant::query()
                 ->where('stock_quantity', '<=', $lowStockThreshold)
                 ->count(),
             'lowStockThreshold' => $lowStockThreshold,
         ],
+        'salesChart' => $salesChart,
+        'recentOrders' => $recentOrders,
     ]);
 })->middleware('auth:admin')->name('dashboard');
 

@@ -52,7 +52,7 @@
         [
             'label' => 'Administration',
             'items' => [
-                ['label' => 'Staff &amp; Permissions', 'icon' => 'shield'],
+                // ['label' => 'Staff &amp; Permissions', 'icon' => 'shield'],
                 ['label' => 'Settings', 'icon' => 'cog', 'route' => 'admin.settings.index', 'matches' => 'admin.settings.*'],
             ],
         ],

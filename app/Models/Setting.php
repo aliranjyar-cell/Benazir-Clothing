@@ -47,7 +47,7 @@ class Setting extends Model
     {
         return [
             // --- General Store ---
-            'store_name' => 'BENAZIR',
+            'store_name' => 'AURELLE',
             'store_tagline' => 'Lahore • London • New York',
             'store_logo' => null,
             'store_favicon' => null,
