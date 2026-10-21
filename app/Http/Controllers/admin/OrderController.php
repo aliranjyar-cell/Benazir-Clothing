@@ -164,7 +164,7 @@ class OrderController extends Controller
 
             if (
                 $lockedOrder->payment_status !== Order::PAYMENT_UNPAID
-                || $lockedOrder->payment_method !== 'cash_on_delivery'
+                || ! in_array($lockedOrder->payment_method, ['cash_on_delivery', 'bank_transfer'], true)
                 || $lockedOrder->status === Order::STATUS_CANCELLED
             ) {
                 throw ValidationException::withMessages([

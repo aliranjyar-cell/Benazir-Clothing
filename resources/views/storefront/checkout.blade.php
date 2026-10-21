@@ -43,10 +43,52 @@
                         @endif
 
                         <form method="POST" action="{{ route('store.checkout.place') }}"
+                            enctype="multipart/form-data"
                             class="mt-space-md grid gap-space-md">
                             @csrf
                             <input type="hidden" name="checkout_token" value="{{ $checkoutToken }}">
-                            <input type="hidden" name="payment_method" value="{{ $defaultPaymentMethod }}">
+
+                            <div class="mt-space-md space-y-space-sm">
+                                <label class="font-body-sm text-body-sm text-on-surface-variant">Payment method</label>
+                                <div class="grid gap-space-sm sm:grid-cols-2">
+                                    @foreach ($paymentMethods as $methodKey => $methodLabel)
+                                        <label class="flex items-center gap-space-sm rounded-lg border border-outline-variant bg-surface-container-lowest p-space-sm cursor-pointer @if($defaultPaymentMethod === $methodKey) ring-1 ring-primary bg-primary/5 @endif">
+                                            <input type="radio" name="payment_method" value="{{ $methodKey }}"
+                                                {{ $defaultPaymentMethod === $methodKey ? 'checked' : '' }}
+                                                class="accent-primary">
+                                            <span class="text-body-sm text-on-surface font-body-sm">
+                                                {{ $methodLabel }}
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            @if (filled($bankDetails))
+                                <div class="mt-space-sm rounded-lg border border-outline-variant bg-surface-container-low p-space-md">
+                                    <p class="font-label-uppercase text-label-uppercase text-secondary">
+                                        Bank transfer details
+                                    </p>
+                                    <p class="mt-space-xs whitespace-pre-line font-body-sm text-body-sm text-on-surface-variant">
+                                        {{ $bankDetails }}
+                                    </p>
+                                </div>
+                            @endif
+
+                            @if (array_key_exists('bank_transfer', $paymentMethods))
+                                <div class="mt-space-sm space-y-space-xs">
+                                    <label for="payment_proof" class="font-body-sm text-body-sm text-on-surface-variant">Payment proof (receipt / transfer slip)</label>
+                                    <input type="file" name="payment_proof" id="payment_proof"
+                                        class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2.5 text-on-surface font-body-sm outline-none ring-1 ring-secondary/30 focus:ring-primary-container transition-all"
+                                        accept="image/*">
+                                    @error('payment_proof')
+                                        <p class="font-label-uppercase text-label-uppercase text-error">{{ $message }}</p>
+                                    @enderror
+                                    <p class="mt-space-xs text-label-uppercase text-label-uppercase text-secondary text-body-sm">
+                                        Upload a screenshot or photo of your bank transfer receipt.
+                                    </p>
+                                </div>
+                            @endif
 
                             <div class="grid gap-space-md sm:grid-cols-2">
                                 <div class="space-y-space-xs">

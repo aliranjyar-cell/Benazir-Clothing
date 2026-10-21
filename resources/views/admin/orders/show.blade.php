@@ -40,7 +40,7 @@
 
         $canUpdatePayment =
             $order->payment_status === 'unpaid' &&
-            $order->payment_method === 'cash_on_delivery' &&
+            in_array($order->payment_method, ['cash_on_delivery', 'bank_transfer'], true) &&
             $order->status !== 'cancelled';
     @endphp
 
@@ -598,6 +598,16 @@
                         </div>
                     @endif
 
+                    @if ($order->payment_proof)
+                        <div class="mt-2 flex justify-between gap-3 text-xs">
+                            <span class="text-ink/50">Payment proof</span>
+                            <a href="{{ asset('storage/' . $order->payment_proof) }}"
+                                class="max-w-[60%] break-all text-right font-medium text-ink underline hover:text-lilac" target="_blank">
+                                View receipt
+                            </a>
+                        </div>
+                    @endif
+
                     @if ($order->paid_at)
                         <div class="mt-2 flex justify-between gap-3 text-xs">
                             <span class="text-ink/50">Paid at</span>
@@ -646,8 +656,8 @@
                                 @if ($order->payment_status === 'paid')
                                     Payment was collected
                                     {{ $order->paid_at?->format('d M Y, h:i A') ?? 'at an unrecorded time' }}.
-                                @elseif ($order->payment_method !== 'cash_on_delivery')
-                                    Collection confirmation is available only for cash-on-delivery orders.
+                                @elseif (! in_array($order->payment_method, ['cash_on_delivery', 'bank_transfer'], true))
+                                    Collection confirmation is available only for cash-on-delivery or bank-transfer orders.
                                 @else
                                     This payment cannot be changed through collection. Corrections and refunds require a
                                     separate audited workflow.

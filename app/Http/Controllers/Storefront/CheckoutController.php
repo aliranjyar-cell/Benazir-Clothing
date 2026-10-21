@@ -62,9 +62,7 @@ class CheckoutController extends Controller
             'paymentMethods' => $this->paymentMethods(),
             'defaultPaymentMethod' => config('storefront.checkout.default_payment_method'),
             'paymentNote' => $this->paymentNote(),
-            'bankDetails' => config('storefront.checkout.default_payment_method') === 'bank_transfer'
-                ? (string) config('storefront.checkout.bank_details', '')
-                : '',
+            'bankDetails' => (string) config('storefront.checkout.bank_details', ''),
             'orderNotesEnabled' => (bool) config('storefront.checkout.order_notes_enabled', true),
             'estimatedDelivery' => (string) config('storefront.shipping.estimated_days', ''),
             'freeShippingOver' => (float) config('storefront.checkout.shipping_free_over', 0),
@@ -108,6 +106,7 @@ class CheckoutController extends Controller
                 'required',
                 Rule::in(array_keys($this->paymentMethods())),
             ],
+            'payment_proof' => ['nullable', 'file', 'image', 'max:2048'],
             'customer_note' => ['nullable', 'string', 'max:2000'],
         ]);
 
@@ -155,8 +154,13 @@ class CheckoutController extends Controller
             ]);
         }
 
+        $paymentProofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $paymentProofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
+        }
+
         try {
-            $order = DB::transaction(function () use ($lines, $validated, $checkoutToken) {
+            $order = DB::transaction(function () use ($lines, $validated, $checkoutToken, $paymentProofPath) {
                 // Lock rows in a stable order to avoid deadlocks.
                 $variantIds = $lines->pluck('variant.id')->sort()->values()->all();
 
@@ -235,6 +239,7 @@ class CheckoutController extends Controller
                     'payment_status' => Order::PAYMENT_UNPAID,
                     'payment_method' => $validated['payment_method'],
                     'payment_reference' => null,
+                    'payment_proof' => $paymentProofPath,
                     'paid_at' => null,
                     'customer_note' => $validated['customer_note'] ?? null,
                 ]);

@@ -227,7 +227,7 @@ class SettingController extends Controller
             ],
             'checkout_allow_guest' => ['nullable', 'in:0,1'],
             'checkout_order_notes' => ['nullable', 'in:0,1'],
-            'checkout_bank_details' => ['nullable', 'string', 'max:500'],
+            'checkout_bank_details' => ['nullable', 'string', 'max:2000'],
         ]);
 
         Setting::set('payment_methods_enabled', (string) json_encode(array_values($data['payment_methods_enabled'])));

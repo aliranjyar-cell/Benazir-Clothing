@@ -64,6 +64,7 @@ class Order extends Model
         'payment_status',
         'payment_method',
         'payment_reference',
+        'payment_proof',
         'paid_at',
         'customer_note',
         'internal_note',
